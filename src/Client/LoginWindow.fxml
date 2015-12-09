@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+
+<GridPane alignment="center" hgap="10" vgap="10" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Client.LoginController">
+   <columnConstraints>
+      <ColumnConstraints />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints />
+   </rowConstraints>
+   <children>
+      <Pane prefHeight="282.0" prefWidth="250.0">
+         <children>
+            <Button layoutX="142.0" layoutY="178.0" mnemonicParsing="false" onMouseClicked="#LoginButtonClicked" text="Login" />
+            <Button layoutX="127.0" layoutY="213.0" mnemonicParsing="false" onMouseClicked="#CreateUserButtonClicked" text="Create user" />
+            <TextField fx:id="serverName" layoutX="90.0" layoutY="30.0" />
+            <TextField fx:id="userName" layoutX="91.0" layoutY="88.0" />
+            <PasswordField fx:id="password" layoutX="90.0" layoutY="141.0" />
+            <Label layoutX="4.0" layoutY="34.0" text="ServerId (opt.))" />
+            <Label layoutX="30.0" layoutY="92.0" text="Login" />
+            <Label layoutX="20.0" layoutY="145.0" text="Password" />
+         </children>
+      </Pane>
+   </children>
+</GridPane>
