@@ -85,7 +85,8 @@ public class MainController {
     @FXML
     public void NewNoteButtonClicked(Event event) {
         _isNewNote = true;
-        _client.CreateNote(noteData.getText(), noteCaption.getText(), new ArrayList<Integer>());
+        //_client.CreateNote(noteData.getText(), noteCaption.getText(), new ArrayList<Integer>());
+        //_noteData.
     }
 
     public void SyncData(Client mainApp, Stage mainStage, NoteModel notes, VersionInfoModel vers){
