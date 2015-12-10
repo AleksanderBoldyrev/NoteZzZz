@@ -149,7 +149,8 @@ public class Note {
         if (id<0)
             id = 0;
 
-        return _tags.get(id);
+        if (_tags.size() > 0) return _tags.get(id);
+        else return 0;
     }
 
     public void SetTitle(String data)

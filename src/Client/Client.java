@@ -389,7 +389,7 @@ public class Client extends Application {
         int lastId = 0;
         ArrayList<String> res = new ArrayList<>();
         if (_tagList.size() > 0)
-            lastId = _tagList.get(_tagList.size()).GetId();
+            lastId = _tagList.get(_tagList.size()-1).GetId();
         StringBuilder str = new StringBuilder();
         if (tags.length()>0) {
             for (int i = 0; i < tags.length(); i++) {

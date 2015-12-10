@@ -599,7 +599,7 @@ public class BaseWorker {
         //if (VerifyUserId(userId)) {
         int m = 0;
         if (_notes.size() > 0)
-            m = _notes.get(_notes.size()).GetId() + 1;
+            m = _notes.get(_notes.size()-1).GetId()+1;
         Note n1 = new Note(m, title, data, LocalDateTime.parse(cDate), LocalDateTime.parse(mDate));
         _notes.add(n1);
         return m;
