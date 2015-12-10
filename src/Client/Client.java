@@ -1,17 +1,17 @@
 package Client;
 
 import Main.CommonData;
-import Main.NotePrimitive;
 import Main.RequestsParser;
 import Main.Tag;
 import javafx.application.Application;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.Event;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import sun.util.resources.cldr.agq.CalendarData_agq_CM;
 
 import java.io.*;
 import java.net.Socket;
@@ -36,7 +36,7 @@ public class Client extends Application{
     private static PrintWriter _out;
 
     private static boolean termFlag;
-    private static int _stage;                           //0 - Notes captions view, 1 - List of versions view
+    private static int _stage;                           //0 - Notes captions view, 1 - List of versions view, 2 - exit
     private static String _login;
     private static String _pass;
     private static ArrayList<Tag> _tagList;
@@ -61,7 +61,7 @@ public class Client extends Application{
         t.setDaemon(true);
         t.start();*/
 
-       try {
+        try {
             _sock = new Socket(CommonData.HOST, CommonData.PORT);
             _in = new BufferedReader(new InputStreamReader(_sock.getInputStream()));
             _out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(_sock.getOutputStream())), true);
@@ -79,7 +79,6 @@ public class Client extends Application{
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-
         startProcess();
 
         _isAuth = false;
@@ -90,9 +89,17 @@ public class Client extends Application{
 
         FillLists();
 
-        FXMLLoader loader = new FXMLLoader();
+        while (_stage!=2) {
+            ShowLoginWindow();
+            ShowMainWindow();
+        }
+    }
 
-         /* Show login window */
+    private void ShowLoginWindow() throws Exception{
+           /* Show login window */
+        int suc = CommonData.SERV_NO;
+
+        FXMLLoader loader = new FXMLLoader();
         loader.setLocation(Client.class.getResource("LoginWindow.fxml"));
         _lNode = loader.load();
         _mainStage.setTitle(CommonData.LOG_W_CAPTION);
@@ -100,13 +107,17 @@ public class Client extends Application{
         _mainStage.setScene(_mainScene);
         LoginController lc = loader.getController();
         lc.SetUserData(_userData, _mainStage);
-        _mainStage.showAndWait();
-        if (_userData.getToCreate().get())
-            CreateUser(_userData.getLogin().get(), _userData.getPass().get());
-        else
-            Login(_userData.getLogin().get(), _userData.getPass().get());
+        while (suc != CommonData.SERV_YES) {
+            _mainStage.showAndWait();
+            if (_userData.getToCreate().get())
+                suc = CreateUser(_userData.getLogin().get(), _userData.getPass().get());
+            else
+                suc = Login(_userData.getLogin().get(), _userData.getPass().get());
         /*TODO: to add support of situation when user closed login window without login or create user*/
+        }
+    }
 
+    private void ShowMainWindow() throws Exception{
         /*Show main window*/
         FXMLLoader loader2 = new FXMLLoader();
         loader2.setLocation(Client.class.getResource("MainWindow.fxml"));
@@ -116,26 +127,35 @@ public class Client extends Application{
         _mainStage.setTitle(CommonData.MAIN_W_CAPTION);
         _mainScene = new Scene(_mNode, CommonData.MAIN_W_W, CommonData.MAIN_W_H);
         _mainStage.setScene(_mainScene);
-        _mainStage.show();
+        _mainStage.showAndWait();
+    }
+
+    public void SetStatusExit() {
+        _stage = 2;
     }
 
     private void FillLists(){
         Random random = new Random();
-        for (int i = 0; i< 10; i++)
-        {
-
-            _notes.add(new NoteModel(random.nextInt()+"", random.nextInt()+"", random.nextInt()+"", random.nextInt()+""));
-            _versions.add(new VersionInfoModel(random.nextInt()+"", random.nextInt()+""));
+        for (int i = 0; i < this.getNotes().size(); i++) {
+            //_notes.add(new NoteModel(random.nextInt() + "", random.nextInt() + "", random.nextInt() + "", random.nextInt() + ""));
+            //_versions.add(new VersionInfoModel(random.nextInt() + "", random.nextInt() + ""));
+            _notes.add(this.getNotes().get(i));
+        }
+        for (int i = 0; i < this.getVersions().size(); i++) {
+            //_notes.add(new NoteModel(random.nextInt() + "", random.nextInt() + "", random.nextInt() + "", random.nextInt() + ""));
+            //_versions.add(new VersionInfoModel(random.nextInt() + "", random.nextInt() + ""));
+            _versions.add(this.getVersions().get(i));
         }
     }
 
     public void ReFill(){
         Random random = new Random();
-        for (int i = 0; i< 10; i++)
+        for (int i = 0; i < this.getVersions().size(); i++)
         {
 
             //_notes.add(new NoteModel(random.nextInt()+"", random.nextInt()+"", random.nextInt()+"", random.nextInt()+""));
-            _versions.set(i, new VersionInfoModel(random.nextInt()+"", random.nextInt()+""));
+            //_versions.set(i, new VersionInfoModel(random.nextInt()+"", random.nextInt()+""));
+            _versions.set(i, this.getVersions().get(i));
         }
     }
 
@@ -167,12 +187,13 @@ public class Client extends Application{
         return _mainStage;
     }
 
-   public void setAuth(final boolean foo)
-   {
-       _isAuth = foo;
-   }
+    public void setAuth(final boolean flag)
+    {
+        _isAuth = flag;
+    }
 
-    public void Login(String _log, String _pass) {
+    public int Login(String _log, String _pass) {
+        int suc = CommonData.SERV_NO;
         ArrayList<String> s = new ArrayList<String>();
         s.add(_log);
         s.add(_pass);
@@ -194,14 +215,16 @@ public class Client extends Application{
                         _isAuth = true;
                         _stage = 0;
                         LoadBasicDataFromServer();
+                        suc = CommonData.SERV_YES;
                     }
                     //else
                     //   _uiLogin.label.showMessage("User name or password is incorrect!");
                 }
         }
+        return suc;
     }
 
-    public void Logout() {
+    public int Logout() {
         String st = _parser.Build("", CommonData.O_LOGOUT);
         SendToServer(st);
         String str = WaitForServer();
@@ -214,13 +237,11 @@ public class Client extends Application{
                     if (buff.get(1) == CommonData.SERV_YES)
                     {
                         _isAuth = false;
-                        _mainStage.setTitle(CommonData.LOG_W_CAPTION);
-                        _mainScene = new Scene(_mNode, 600, 400);
-                        _mainStage.setScene(_mainScene);
-                        _mainStage.show();
+                        return CommonData.SERV_YES;
                     }
                 }
         }
+        return CommonData.SERV_NO;
     }
 
     public void LoadBasicDataFromServer(){
@@ -231,7 +252,8 @@ public class Client extends Application{
     public void SetListView()
     {}
 
-    public void CreateUser(String _log, String _pass) {
+    public int CreateUser(String _log, String _pass) {
+        int suc = CommonData.SERV_NO;
         ArrayList<String> s = new ArrayList<String>();
         s.add(_log);
         boolean add = s.add(_pass);
@@ -244,10 +266,11 @@ public class Client extends Application{
                 if (buff.get(0) == CommonData.O_RESPOND) {
                     if (buff.get(1) == CommonData.SERV_YES) {
                         _isAuth = true;
-                        Login(_log, _pass);
+                        suc = Login(_log, _pass);
                     }
                 }
         }
+        return suc;
     }
 
     public void DeleteUser(int user_id) {
@@ -272,11 +295,15 @@ public class Client extends Application{
         }
     }
 
-    public int CreateNote(String note, String caption, ArrayList<Integer> tags) {
+    public int CreateNote() {
         ArrayList<String> res = new ArrayList<String>();
         String st;
-        res.add(note);
-        res.add(caption);
+        res.add(_versData.getText().toString());
+        res.add(_noteData.getTitle().toString());
+        //Parse new tags
+        ArrayList<String> tagData = UpdateTagList(_noteData.getTags().toString());
+        //Convert tags of new note to tag ids
+        ArrayList<Integer> tags = ConvertTagsIntoIds(tagData);
         if (tags.size()>0)
             for (int i =0; i<tags.size(); i++) {
                 res.add(tags.get(i).toString());
@@ -297,6 +324,51 @@ public class Client extends Application{
                 }
         }
         return 0;
+    }
+
+    private ArrayList<String> UpdateTagList(final String tags) {
+        int lastId = 0;
+        ArrayList<String> res = new ArrayList<>();
+        if (_tagList.size()>0) {
+            lastId = _tagList.get(_tagList.size()).GetId();
+            StringBuilder str = new StringBuilder();
+            for (int i = 0; i < tags.length(); i++) {
+                if (tags.charAt(i)==CommonData.USER_INPUT_TAGS_SEP || (i == (tags.length()-1))){
+                    if (str.length()>0) {
+                        Tag t = new Tag(lastId, str.toString());
+                        if (!t.TagIsInArray(_tagList)) {
+                            lastId++;
+                            _tagList.add(t);
+                        }
+                        res.add(str.toString());
+                        str.delete(0, str.length());
+                    }
+                }
+                else {
+                    str.append(tags.charAt(i));
+                }
+            }
+        }
+        return res;
+    }
+
+    private ArrayList<Integer> ConvertTagsIntoIds(final ArrayList<String> tagData) {
+        ArrayList<Integer> res = new ArrayList<Integer>();
+        if (_tagList.size()>0 && tagData.size()>0){
+            for (int i = 0; i < tagData.size(); i++)
+            {
+                for (int j = 0; i < _tagList.size(); j++){
+                    if (_tagList.get(j).GetStrData().equals(tagData.get(i))) {
+                        int t = _tagList.get(j).GetId();
+                        if (!res.contains(t)) {
+                            res.add(t);
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        return res;
     }
 
     public void SaveNote(int note_id) {
@@ -587,23 +659,16 @@ public class Client extends Application{
             if (buff.size() > 2)
                 if (Integer.parseInt(buff.get(0)) == CommonData.O_RESPOND)
                 {
-                    if (Integer.parseInt(buff.get(1)) == CommonData.SERV_YES)
-                    {
-                        ArrayList<String> caps = buff;
-                        caps.remove(0);
-                        caps.remove(0);
-                        FillCaptions(caps);
+                    if (Integer.parseInt(buff.get(1)) == CommonData.SERV_YES) {
+                        buff.remove(0);
+                        buff.remove(0);
+                        _notes.clear();
+                        if (buff.size() > 0){
+                            for (int i = 0; i < buff.size(); i++)
+                                _notes.add(new NoteModel(buff.get(i), "", "", ""));
+                        }
                     }
                 }
-        }
-    }
-
-   private void FillCaptions(final ArrayList<String> arr) {
-        if (arr.size()>0) {
-            _versions.clear();
-            for (int i = 0; i < arr.size(); i++) {
-                _versions.add(new VersionInfoModel(arr.get(i), ""));
-            }
         }
     }
 

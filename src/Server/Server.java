@@ -264,7 +264,7 @@ public class Server extends Thread{
         StringBuilder res = new StringBuilder();
         boolean suc = false;
         ArrayList<Integer> ar = new ArrayList<Integer>();
-        if (buff.size()>3) {
+        if (buff.size()>0) {
             suc = ServerDaemon.sHelper.Logout(_userId);
         }
         if (suc)
@@ -308,8 +308,8 @@ public class Server extends Thread{
         ArrayList<Integer> res = new ArrayList<Integer>();
         int suc = -1;
         ArrayList<Integer> ar = new ArrayList<Integer>();
-        if (buff.size()>3) {
-            suc = ServerDaemon.sHelper.CreateNote(0, buff.get(1), buff.get(2));
+        if (buff.size()>4) {
+            suc = ServerDaemon.sHelper.CreateNote(_userId, buff.get(1), buff.get(2), buff.get(3), buff.get(4));
         }
         if (suc >= 0)
             res.add(CommonData.SERV_YES);

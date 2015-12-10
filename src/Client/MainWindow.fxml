@@ -35,7 +35,7 @@
             <items>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="373.0" prefWidth="359.0">
                     <children>
-                        <Button fx:id="NewNoteButton" layoutX="153.0" layoutY="334.0" mnemonicParsing="false" onMouseClicked="#NewNoteButtonClicked" text="New note" />
+                        <Button fx:id="NewNoteButton" layoutX="153.0" layoutY="337.0" mnemonicParsing="false" onMouseClicked="#NewNoteButtonClicked" text="New note" />
                   <SplitPane dividerPositions="0.5013477088948787" prefHeight="320.0" prefWidth="373.0">
                     <items>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
@@ -66,6 +66,7 @@
                         </AnchorPane>
                     </items>
                   </SplitPane>
+                  <Button fx:id="Logout" layoutX="27.0" layoutY="337.0" mnemonicParsing="false" onMouseClicked="#Logout" text="Logout" />
                     </children>
                 </AnchorPane>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="373.0" prefWidth="427.0">
@@ -84,5 +85,6 @@
                 </AnchorPane>
             </items>
         </SplitPane>
+      <Label layoutX="188.0" layoutY="6.0" prefHeight="17.0" prefWidth="587.0" text="" fx:id="infoLabel" />
     </children>
 </Pane>

@@ -133,10 +133,22 @@ public class SecurityHelper {
         return res;
     }
 
-    public synchronized int CreateNote(int userId, String data, String title) { //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    public synchronized int CreateNote(int userId, String data, String title, String cDate, String mDate) { //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         _rCount++;
         if (_activeUsers.contains(userId)) {
-            return _dataBase.AddNote(userId, data, title);
+            int res = _dataBase.AddNote(data, title, cDate, mDate);
+            if (res>=0)
+                _dataBase.AddNoteToUser(userId, res);
+            else
+                return -1;
+        }
+        return -1;
+    }
+
+    public synchronized int AddTag(final int userId, final int noteId, final ArrayList<Integer> tags){
+        _rCount++;
+        if (_activeUsers.contains(userId) /*TODO: Verify bound userId and noteId*/){
+            return _dataBase.AddTagsToNote(noteId, tags);
         }
         return -1;
     }

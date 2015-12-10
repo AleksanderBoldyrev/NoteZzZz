@@ -67,6 +67,7 @@ public class RequestsParser {
         res.append(oId);
         res.append(CommonData.SEP);
         res.append(buff);
+        res.append(CommonData.SEP);
         return res.toString();
     }
 
@@ -83,6 +84,7 @@ public class RequestsParser {
         res.append(oId);
         res.append(CommonData.SEP);
         res.append(buff);
+        res.append(CommonData.SEP);
         return res.toString();
     }
 

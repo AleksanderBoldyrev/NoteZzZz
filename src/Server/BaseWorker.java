@@ -531,26 +531,39 @@ public class BaseWorker {
         }*/
     }
 
-    /**
-     * Adds note to the user's account base;
-     *
-     * @param userId - user account ID;
-     *               //* @param _tags - tags bound with future note;
-     * @param _data  - consistence of the note;
-     * @param title  - note's title.
-     */
-    public int AddNote(int userId, String _data, String title) {
-        if (VerifyUserId(userId)) {
-            int m = 0;
-            if (_notes.size() > 0) m = _notes.get(0).GetId() + 1;
-            NotePrimitive np = new NotePrimitive(0, LocalDateTime.now(), _data);
-            ArrayList<NotePrimitive> al = new ArrayList<NotePrimitive>();
-            al.add(np);
-            Note n1 = new Note(m, new ArrayList<Integer>(), al, title);
-            _notes.add(n1);
-            _users.get(userId).AddNote(m);
-            return m;
+    public int AddTagsToNote(final int noteId, final ArrayList<Integer> tags){
+        if (VerifyNoteId(noteId))
+            if (_notes.size()>0)
+                for (int i = 0; i < _notes.size(); i++)
+                    if (_notes.get(i).GetId() == noteId) {
+                        _notes.get(i).AddTags(tags);
+                        return 0;
+                    }
+        return -1;
+    }
+
+    public int AddNoteToUser(final int userId, final int noteId) {
+        if (VerifyUserId(userId) && VerifyNoteId(noteId)){
+            if (_users.size()>0)
+                for (int i = 0; i < _users.size(); i++)
+                    if (_users.get(i).GetId()==userId){
+                        _users.get(i).AddNote(noteId);
+                        return 0;
+                    }
+
         }
+        return -1;
+    }
+
+    public int AddNote(final String data, final String title, final String cDate, final String mDate) {
+        //if (VerifyUserId(userId)) {
+            int m = 0;
+            if (_notes.size() > 0)
+                m = _notes.get(_notes.size()).GetId() + 1;
+            Note n1 = new Note(m, title, data, LocalDateTime.parse(cDate), LocalDateTime.parse(mDate));
+            _notes.add(n1);
+            return m;
+        //}
         //File file = new File(fileName);
         /*try
         {
@@ -581,7 +594,7 @@ public class BaseWorker {
         } catch(IOException e) {
             throw new RuntimeException(e);
         }*/
-        return -1;
+
     }
 
     /**

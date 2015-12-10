@@ -2,6 +2,7 @@ package Client;
 
 import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -10,6 +11,8 @@ import javafx.stage.Stage;
  * Created by Alex on 06.12.2015.
  */
 public class LoginController {
+    @FXML
+    private Label infoLabel;
     @FXML
     private TextField serverName;
     @FXML
@@ -45,5 +48,9 @@ public class LoginController {
     public void SetUserData(UserModel data, Stage stage) {
         _userData = data;
         _mainStage = stage;
+    }
+
+    private void NotifyUser(final String s) {
+        infoLabel.setText(s);
     }
 }

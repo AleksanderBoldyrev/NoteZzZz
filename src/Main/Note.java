@@ -1,5 +1,7 @@
 package Main;
 
+import Client.LoginController;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
@@ -29,6 +31,16 @@ public class Note {
 
     }*/
 
+
+    public Note (final int id, final String title, final String data, final LocalDateTime cDate, final LocalDateTime mDate){
+        _id = id;
+        _title = title;
+        _tags = new ArrayList<Integer>();
+        _n_cdate = cDate;
+        _n_mdate = mDate;
+        _note = new ArrayList<NotePrimitive>();
+        _note.add(new NotePrimitive(0, mDate, data));
+    }
 
     public Note (int id, ArrayList<Integer> tags, ArrayList<NotePrimitive> notes, String title) {
         _note = new ArrayList<NotePrimitive>();
@@ -148,6 +160,12 @@ public class Note {
     public void SetTags(ArrayList<Integer> _tagIds)
     {
         _tags = _tagIds;
+    }
+
+    public void AddTags(final ArrayList<Integer> tagList){
+        if (tagList.size()>0)
+            for (int i = 0; i < tagList.size(); i++)
+                _tags.add(tagList.get(i));
     }
 
     public void DelVersion(int _targetId)

@@ -1,5 +1,7 @@
 package Main;
 
+import java.util.ArrayList;
+
 /**
  * Created by Alex on 19.10.2015.
  *
@@ -50,4 +52,13 @@ public class Tag {
         return this.strData;
     }
 
+    public boolean TagIsInArray(final ArrayList<Tag> tags){
+        if (tags.size()>0){
+            for (int i = 0; i < tags.size(); i++) {
+                if (tags.get(i).GetStrData().equals(this.strData))
+                    return true;
+            }
+        }
+        return false;
+    }
 }

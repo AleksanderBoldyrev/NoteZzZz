@@ -4,17 +4,27 @@ package Client;
  * The class describes the model of the note and is used to implement JavaFX MVC model.
  */
 
+import Main.CommonData;
 import Main.Note;
+import com.sun.corba.se.spi.activation.IIOP_CLEAR_TEXT;
 import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 //import javafx.scene.control.Alert;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class MainController {
-    public MenuItem aboutButton;
+    @FXML
+    private MenuItem aboutButton;
+    @FXML
+    private Button Logout;
+    @FXML
+    private Label infoLabel;
     @FXML
     private TextField tagList;
     @FXML
@@ -45,11 +55,13 @@ public class MainController {
     private String _undoBuff;
 
     private int _mode; // 0 - view only notes, 1 - view notes and versions and text
-    private boolean _isNewNote = false;
+    private boolean _isNewNote;
 
     @FXML
     private void initialize() {
         // Initialize the person table with the two columns.
+
+        _isNewNote = true;
 
         noteColumn.setCellValueFactory(
                 cellData -> cellData.getValue().getTitle());
@@ -62,6 +74,7 @@ public class MainController {
                 (observable, oldValue, newValue) -> ShowInfo(newValue));
         versView.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> ShowInfo2(newValue));
+
     }
 
     /*@FXML
@@ -73,8 +86,22 @@ public class MainController {
     @FXML
     private void SaveButtonClicked(Event event) {
         _undoBuff = noteData.getText();
-        if (_isNewNote) _client.SaveNote(_client.getSelectedVersion());
-        else _client.CreateNote(noteData.getText(), noteCaption.getText(), new ArrayList<Integer>());
+        if (_isNewNote) {
+            String ss = LocalDateTime.now().toString();
+            _noteData.setTitle(noteCaption.getText());
+            _noteData.setTags(tagList.getText());
+            _noteData.setCDate(ss);
+            _noteData.setmDate(ss);
+
+            _versData.setText(noteData.getText());
+            _versData.setTitle(ss);
+
+            _client.CreateNote();
+            //_client.SaveNote(_client.getSelectedVersion());
+        }
+        else {
+            //_client.CreateNote(noteData.getText(), noteCaption.getText(), new ArrayList<Integer>());
+        }
     }
 
     @FXML
@@ -87,6 +114,7 @@ public class MainController {
         _isNewNote = true;
         //_client.CreateNote(noteData.getText(), noteCaption.getText(), new ArrayList<Integer>());
         //_noteData.
+        //_client.
     }
 
     public void SyncData(Client mainApp, Stage mainStage, NoteModel notes, VersionInfoModel vers){
@@ -96,9 +124,15 @@ public class MainController {
         _versData = vers;
         noteView.setItems(mainApp.getNotes());
         versView.setItems(mainApp.getVersions());
+        _stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            public void handle(WindowEvent we) {
+                _client.SetStatusExit();
+            }
+        });
     }
 
     private void  ShowInfo2(VersionInfoModel data){
+        _isNewNote = false;
         if (data!= null) {
             if (_mode==1) {
                 _client.setSelectedVersion(versView.getSelectionModel().getSelectedIndex());
@@ -131,5 +165,18 @@ public class MainController {
     }
 
     public void AboutButtonClicked(Event event) {
+    }
+
+    public void Logout(Event event) {
+        if (_client.Logout()== CommonData.SERV_YES)
+        {
+            _stage.close();
+        }
+        else
+            NotifyUser("Logout unsuccessful. (:");
+    }
+
+    private void NotifyUser(final String s){
+        infoLabel.setText(s);
     }
 }
