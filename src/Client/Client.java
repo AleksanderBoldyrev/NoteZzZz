@@ -106,6 +106,7 @@ public class Client extends Application {
         _mainStage.setTitle(CommonData.LOG_W_CAPTION);
         _mainScene = new Scene(_lNode, CommonData.LOG_W_W, CommonData.LOG_W_H);
         _mainStage.setScene(_mainScene);
+        _mainStage.setResizable(false);
         LoginController lc = loader.getController();
         lc.SetUserData(this, _userData, _mainStage);
         while (suc != CommonData.SERV_YES) {
@@ -128,6 +129,7 @@ public class Client extends Application {
         _mainStage.setTitle(CommonData.MAIN_W_CAPTION);
         _mainScene = new Scene(_mNode, CommonData.MAIN_W_W, CommonData.MAIN_W_H);
         _mainStage.setScene(_mainScene);
+        _mainStage.setResizable(false);
         _mainStage.showAndWait();
     }
 

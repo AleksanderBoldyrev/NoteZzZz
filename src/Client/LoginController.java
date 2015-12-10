@@ -51,11 +51,11 @@ public class LoginController {
     public void SetUserData(Client client, UserModel data, Stage stage) {
         _userData = data;
         _mainStage = stage;
-        _mainStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+        /*_mainStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             public void handle(WindowEvent we) {
                 _client.SetStatusExit();
             }
-        });
+        });*/
     }
 
     private void NotifyUser(final String s) {

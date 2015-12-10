@@ -10,7 +10,7 @@ public final class CommonData {
     public static final String PATH_1 = "F://Base/File_1.txt";      // *
     public static final String PATH_2 = "F://Base/File_2.txt";      // These are the paths to the DB.
     public static final String PATH_3 = "F://Base/File_3.txt";      // *
-    public static int PORT = 36500;                                 // Number of port we use.
+    public static int PORT = 36560;                                 // Number of port we use.
     public static final String HOST = "localhost";                  // Host name.
     public static final char SEP = '|';                             // Service separator of the sent data.
     public static final char SEPID = '.';                           // Service separator of tag sequence.

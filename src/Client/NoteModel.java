@@ -53,7 +53,7 @@ public class NoteModel {
 
     public IntegerProperty getId(){
         return this._id;
-    }    
+    }
 
     public void setTitle(final String title) {
         this._title.set(title);

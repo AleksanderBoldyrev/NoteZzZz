@@ -172,6 +172,7 @@ public class MainController {
     }
 
     public void AboutButtonClicked(Event event) {
+        NotifyUser("Cool Code!");
     }
 
     public void Logout(Event event) {
