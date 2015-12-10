@@ -12,6 +12,19 @@ import java.util.ArrayList;
 
 public class RequestsParser {
 
+    public String BuildTagList(ArrayList<Tag> tags) {
+        StringBuilder str = new StringBuilder();
+        if (tags.size()>0)
+            for (int i = 0; i < tags.size(); i++){
+                str.append(tags.get(i).GetId());
+                str.append(CommonData.SEP);
+                str.append(tags.get(i).GetStrData());
+                if (i != tags.size()-1)
+                    str.append(CommonData.SEP);
+            }
+        return str.toString();
+    }
+
     /**
      * Procedure used to build serialized string from different strings in the input list
      * and ID of the sought-for operation, in order to simplify the client-server interaction;
@@ -163,6 +176,19 @@ public class RequestsParser {
 
         NotePrimitive np = new NotePrimitive(id, dtbuff, ss);
         return np;
+    }
+
+    public ArrayList<Tag> ParseListOfTags(ArrayList<String> str) {
+        ArrayList<Tag> t = new ArrayList<Tag>();
+
+        if ((str.size() % 2 == 0) && (str.size() > 0))
+            for (int i = 0; i < str.size(); i+=2) {
+                int id = Integer.parseInt(str.get(i));
+                String data = str.get(i+1);
+                Tag tag = new Tag(id, data);
+                t.add(tag);
+            }
+        return t;
     }
 
 }

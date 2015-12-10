@@ -52,5 +52,8 @@ public final class CommonData {
     public static final int O_GETVERSDATE = 17;
     public static final int O_SETNOTEIDS = 19;
     public static final int O_SETNOTEPRIM = 20;
+    public static final int O_ADD_TAGS_TO_NOTE = 21;
+    public static final int O_SYNC_TAG_LIST = 22;
+    public static final int O_ADD_VERSION = 23;
 
 }

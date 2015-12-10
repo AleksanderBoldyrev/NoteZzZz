@@ -1,7 +1,9 @@
 package Server;
 
+import Main.CommonData;
 import Main.Tag;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 /**
@@ -55,8 +57,10 @@ public class SecurityHelper {
     }
 
     public synchronized void FlushBases(){
-        _dataBase.SaveData();
-        _rCount = 0;
+        if (_rCount>= CommonData.STEP_TOFLUSHBASE) {
+            _dataBase.SaveData();
+            _rCount = 0;
+        }
     }
 
     public int GetCounter(final int userId)
@@ -138,7 +142,7 @@ public class SecurityHelper {
         if (_activeUsers.contains(userId)) {
             int res = _dataBase.AddNote(data, title, cDate, mDate);
             if (res>=0)
-                _dataBase.AddNoteToUser(userId, res);
+                return _dataBase.AddNoteToUser(userId, res);
             else
                 return -1;
         }
@@ -190,10 +194,28 @@ public class SecurityHelper {
         return false;
     }
 
+    public synchronized int AddTagsToNote(final int userId, final int noteId, final ArrayList<Integer> tags){
+        _rCount++;
+        if (_activeUsers.contains(userId)) {
+            return _dataBase.AddTagsToNote(noteId, tags);
+        }
+        return -1;
+    }
+
     public synchronized void AddTagToNote(String t)
     {
         _rCount++;
         _dataBase.AddTag(t);
+    }
+
+    public synchronized ArrayList<Tag> SyncTagList(final int userId, final ArrayList<Tag> newTags){
+        _rCount++;
+        ArrayList<Tag> res = new ArrayList<Tag>();
+        if (_activeUsers.contains(userId)) {
+            _dataBase.SyncTags(newTags);
+            return _dataBase.GetTagList();
+        }
+        return res;
     }
 
     public synchronized void ChangeUser() {
@@ -237,4 +259,12 @@ public class SecurityHelper {
         return false;
     }
 
+    public int AddVersionToNote(final int userId, final int noteId,final String text, final LocalDateTime time) {
+        int res = CommonData.SERV_NO;
+        _rCount++;
+        if (_activeUsers.contains(userId)){
+            return _dataBase.AddVersionToNote(noteId, text, time);
+        }
+        return res;
+    }
 }

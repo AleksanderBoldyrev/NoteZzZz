@@ -6,6 +6,7 @@ import Main.Tag;
 
 import java.io.*;
 import java.net.Socket;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 /**
@@ -118,6 +119,15 @@ public class Server extends Thread{
                             case CommonData.O_SETNOTEPRIM:
                                 resp = SetNotePrimitive(buff);
                                 break;
+                            case CommonData.O_ADD_TAGS_TO_NOTE:
+                                resp = AddTagsToNote(_parser.ParseListOfInteger(str));
+                                break;
+                            case CommonData.O_SYNC_TAG_LIST:
+                                resp = SyncTagList(buff);
+                                break;
+                            case CommonData.O_ADD_VERSION:
+                                resp = AddVersion(buff);
+                                break;
                         }
 
                     } catch (NumberFormatException e)
@@ -168,9 +178,7 @@ public class Server extends Thread{
     }
 
     public void FlushBases(){
-        int t = ServerDaemon.sHelper.GetCounter(_userId);
-        if (t>CommonData.STEP_TOFLUSHBASE)
-            ServerDaemon.sHelper.FlushBases();
+        ServerDaemon.sHelper.FlushBases();
     }
 
     /*public String SetNotesIds(ArrayList<String> buff) {
@@ -246,7 +254,7 @@ public class Server extends Thread{
     public String Login(ArrayList<String> buff ) {
         ArrayList<String> res = new ArrayList<String>();
 
-        int id = -1;
+        int id = CommonData.SERV_NO;
         if (buff.size()>2) {
             id = ServerDaemon.sHelper.Login(buff.get(1), buff.get(2));
         }
@@ -304,9 +312,47 @@ public class Server extends Thread{
         return _parser.Build(out.toString(), CommonData.O_RESPOND);
     }
 
-    public String CreateNote(ArrayList<String> buff ) {   //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    public String AddVersion(ArrayList<String> buff){
+        ArrayList<String> res = new ArrayList<String>();
+        int suc = CommonData.SERV_NO;
+        if (buff.size()> 3 ) {
+            int noteId = Integer.parseInt(buff.get(1));
+            String text = buff.get(2);
+            LocalDateTime time = LocalDateTime.parse(buff.get(3));
+            suc = ServerDaemon.sHelper.AddVersionToNote(_userId, noteId, text, time);
+        }
+        res.add(suc+"");
+        return _parser.Build(res, CommonData.O_RESPOND);
+    }
+
+    public String SyncTagList(ArrayList<String> buff){
+        String res = new String();
+        int suc = CommonData.SERV_NO;
+        buff.remove(0); //remove operation id
+        if (buff.size()>0 && (buff.size() % 2 == 0)){
+            ArrayList<Tag> tags = _parser.ParseListOfTags(buff);
+            ArrayList<Tag> newTags = ServerDaemon.sHelper.SyncTagList(_userId, tags);
+            res = _parser.BuildTagList(newTags);
+        }
+        return _parser.Build(res, CommonData.O_RESPOND);
+    }
+
+    public String AddTagsToNote(ArrayList<Integer> buff){
         ArrayList<Integer> res = new ArrayList<Integer>();
         int suc = -1;
+        if (buff.size()> 2 ) {
+            buff.remove(0); // remove operation id
+            int tagId = buff.get(0);
+            buff.remove(0); //remove tag id
+            suc = ServerDaemon.sHelper.AddTagsToNote(_userId, tagId, buff);
+        }
+        res.add(suc);
+        return _parser.Build(CommonData.O_RESPOND, res);
+    }
+
+    public String CreateNote(ArrayList<String> buff ) {   //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        ArrayList<Integer> res = new ArrayList<Integer>();
+        int suc = CommonData.SERV_NO;
         ArrayList<Integer> ar = new ArrayList<Integer>();
         if (buff.size()>4) {
             suc = ServerDaemon.sHelper.CreateNote(_userId, buff.get(1), buff.get(2), buff.get(3), buff.get(4));
@@ -316,7 +362,7 @@ public class Server extends Thread{
         else
             res.add(CommonData.SERV_NO);
         res.add(suc);
-        return _parser.Build(res.toString(), CommonData.O_RESPOND);
+        return _parser.Build(CommonData.O_RESPOND, res);
     }
 
     public String DeleteNote(ArrayList<String> buff ) {

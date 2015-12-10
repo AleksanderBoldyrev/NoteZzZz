@@ -5,8 +5,8 @@ package Client;
  */
 
 import Main.NotePrimitive;
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
@@ -24,6 +24,7 @@ public class NoteModel {
     private final StringProperty _tags;
     private final StringProperty _cDate;
     private final StringProperty _mDate;
+    private final IntegerProperty _id;
 
 
     public NoteModel(final String title, final String tags, final String cDate, final String mDate) {
@@ -31,6 +32,7 @@ public class NoteModel {
         this._tags = new SimpleStringProperty(tags);
         this._cDate = new SimpleStringProperty(cDate);
         this._mDate = new SimpleStringProperty(mDate);
+        this._id = new SimpleIntegerProperty(-1);
         //ObservableList<String> observableList = FXCollections.observableArrayList(vers);
         //this._vers = new SimpleListProperty<String>(observableList);
     }
@@ -42,7 +44,16 @@ public class NoteModel {
         this._mDate = new SimpleStringProperty("");
         //ObservableList<String> observableList = FXCollections.observableArrayList();
         //this._vers = new SimpleListProperty<String>(observableList);
+        this._id = new SimpleIntegerProperty(-1);
     }
+
+    public void setId(final int id){
+        this._id.set(id);
+    }
+
+    public IntegerProperty getId(){
+        return this._id;
+    }    
 
     public void setTitle(final String title) {
         this._title.set(title);

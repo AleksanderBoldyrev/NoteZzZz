@@ -11,7 +11,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import sun.util.resources.cldr.agq.CalendarData_agq_CM;
 
 import java.io.*;
 import java.net.Socket;
@@ -23,11 +22,11 @@ import static java.lang.Thread.sleep;
 
 /**
  * Created by Sasha on 30.09.2015.
- *
+ * <p>
  * This class describes the client's account and provides us with GUI components.
  */
 
-public class Client extends Application{
+public class Client extends Application {
     private static final RequestsParser _parser = new RequestsParser();
     private static boolean _isAuth;
 
@@ -86,16 +85,18 @@ public class Client extends Application{
 
         _tagList = new ArrayList<Tag>();
         _userData = new UserModel();
+        _noteData = new NoteModel();
+        _versData = new VersionInfoModel();
 
         FillLists();
 
-        while (_stage!=2) {
+        while (_stage != 2) {
             ShowLoginWindow();
             ShowMainWindow();
         }
     }
 
-    private void ShowLoginWindow() throws Exception{
+    private void ShowLoginWindow() throws Exception {
            /* Show login window */
         int suc = CommonData.SERV_NO;
 
@@ -106,7 +107,7 @@ public class Client extends Application{
         _mainScene = new Scene(_lNode, CommonData.LOG_W_W, CommonData.LOG_W_H);
         _mainStage.setScene(_mainScene);
         LoginController lc = loader.getController();
-        lc.SetUserData(_userData, _mainStage);
+        lc.SetUserData(this, _userData, _mainStage);
         while (suc != CommonData.SERV_YES) {
             _mainStage.showAndWait();
             if (_userData.getToCreate().get())
@@ -117,7 +118,7 @@ public class Client extends Application{
         }
     }
 
-    private void ShowMainWindow() throws Exception{
+    private void ShowMainWindow() throws Exception {
         /*Show main window*/
         FXMLLoader loader2 = new FXMLLoader();
         loader2.setLocation(Client.class.getResource("MainWindow.fxml"));
@@ -134,7 +135,7 @@ public class Client extends Application{
         _stage = 2;
     }
 
-    private void FillLists(){
+    private void FillLists() {
         Random random = new Random();
         for (int i = 0; i < this.getNotes().size(); i++) {
             //_notes.add(new NoteModel(random.nextInt() + "", random.nextInt() + "", random.nextInt() + "", random.nextInt() + ""));
@@ -148,10 +149,9 @@ public class Client extends Application{
         }
     }
 
-    public void ReFill(){
+    public void ReFill() {
         Random random = new Random();
-        for (int i = 0; i < this.getVersions().size(); i++)
-        {
+        for (int i = 0; i < this.getVersions().size(); i++) {
 
             //_notes.add(new NoteModel(random.nextInt()+"", random.nextInt()+"", random.nextInt()+"", random.nextInt()+""));
             //_versions.set(i, new VersionInfoModel(random.nextInt()+"", random.nextInt()+""));
@@ -159,27 +159,27 @@ public class Client extends Application{
         }
     }
 
-    public ObservableList<NoteModel> getNotes(){
+    public ObservableList<NoteModel> getNotes() {
         return this._notes;
     }
 
-    public ObservableList<VersionInfoModel> getVersions(){
+    public ObservableList<VersionInfoModel> getVersions() {
         return this._versions;
     }
 
-    public int getSelectedNote(){
+    public int getSelectedNote() {
         return _selectedNote;
     }
 
-    public void setSelectedNote(final int sn){
+    public void setSelectedNote(final int sn) {
         _selectedNote = sn;
     }
 
-    public int getSelectedVersion(){
+    public int getSelectedVersion() {
         return _selectedVersion;
     }
 
-    public void setSelectedVersion(final int sv){
+    public void setSelectedVersion(final int sv) {
         _selectedVersion = sv;
     }
 
@@ -187,8 +187,7 @@ public class Client extends Application{
         return _mainStage;
     }
 
-    public void setAuth(final boolean flag)
-    {
+    public void setAuth(final boolean flag) {
         _isAuth = flag;
     }
 
@@ -202,14 +201,11 @@ public class Client extends Application{
         SendToServer(st);
         String str = WaitForServer();
 
-        if (!str.equals(""))
-        {
+        if (!str.equals("")) {
             ArrayList<Integer> buff = _parser.ParseListOfInteger(str);
             if (buff.size() > 1)
-                if (buff.get(0) == CommonData.O_RESPOND)
-                {
-                    if (buff.get(1) == CommonData.SERV_YES)
-                    {
+                if (buff.get(0) == CommonData.O_RESPOND) {
+                    if (buff.get(1) == CommonData.SERV_YES) {
                         _login = _log;
                         _pass = _pass;
                         _isAuth = true;
@@ -228,14 +224,11 @@ public class Client extends Application{
         String st = _parser.Build("", CommonData.O_LOGOUT);
         SendToServer(st);
         String str = WaitForServer();
-        if (!str.equals(""))
-        {
+        if (!str.equals("")) {
             ArrayList<Integer> buff = _parser.ParseListOfInteger(str);
             if (buff.size() > 1)
-                if (buff.get(0) == CommonData.O_RESPOND)
-                {
-                    if (buff.get(1) == CommonData.SERV_YES)
-                    {
+                if (buff.get(0) == CommonData.O_RESPOND) {
+                    if (buff.get(1) == CommonData.SERV_YES) {
                         _isAuth = false;
                         return CommonData.SERV_YES;
                     }
@@ -244,13 +237,13 @@ public class Client extends Application{
         return CommonData.SERV_NO;
     }
 
-    public void LoadBasicDataFromServer(){
+    public void LoadBasicDataFromServer() {
         GetCaptions();
         GetTags();
     }
 
-    public void SetListView()
-    {}
+    public void SetListView() {
+    }
 
     public int CreateUser(String _log, String _pass) {
         int suc = CommonData.SERV_NO;
@@ -277,14 +270,11 @@ public class Client extends Application{
         String st = _parser.Build(user_id, CommonData.O_DELETE_U);
         SendToServer(st);
         String str = WaitForServer();
-        if (!str.equals(""))
-        {
+        if (!str.equals("")) {
             ArrayList<Integer> buff = _parser.ParseListOfInteger(str);
             if (buff.size() > 1)
-                if (buff.get(0) == CommonData.O_RESPOND)
-                {
-                    if (buff.get(1) == CommonData.SERV_YES)
-                    {
+                if (buff.get(0) == CommonData.O_RESPOND) {
+                    if (buff.get(1) == CommonData.SERV_YES) {
                         _isAuth = false;
                         _mainStage.setTitle(CommonData.LOG_W_CAPTION);
                         _mainScene = new Scene(_mNode, 600, 400);
@@ -295,46 +285,114 @@ public class Client extends Application{
         }
     }
 
-    public int CreateNote() {
-        ArrayList<String> res = new ArrayList<String>();
-        String st;
-        res.add(_versData.getText().toString());
-        res.add(_noteData.getTitle().toString());
-        //Parse new tags
-        ArrayList<String> tagData = UpdateTagList(_noteData.getTags().toString());
-        //Convert tags of new note to tag ids
-        ArrayList<Integer> tags = ConvertTagsIntoIds(tagData);
-        if (tags.size()>0)
-            for (int i =0; i<tags.size(); i++) {
-                res.add(tags.get(i).toString());
-            }
-        st = _parser.Build(res, CommonData.O_CREATE_N);
+    public void CreateVersion(){
+        ArrayList<String> buf = new ArrayList<String>();
+        int verId=CommonData.SERV_NO;
+
+        buf.add(_versData.getText().get());
+        buf.add(_noteData.getMDate().get());
+
+        String st = _parser.Build(buf, CommonData.O_ADD_VERSION);
+
         SendToServer(st);
         String str = WaitForServer();
-        if (!str.equals(""))
-        {
+        if (!str.equals("")) {
             ArrayList<Integer> buff = _parser.ParseListOfInteger(str);
             if (buff.size() > 2)
-                if (buff.get(0) == CommonData.O_RESPOND)
-                {
-                    if (buff.get(1) == CommonData.SERV_YES)
-                    {
-                        return buff.get(2);
+                if (buff.get(0) == CommonData.O_RESPOND) {
+                    if (buff.get(1) == CommonData.SERV_YES) {
+                        verId = buff.get(2);
                     }
                 }
         }
-        return 0;
+
+        this._versData.setId(verId);
+        this._versions.add(this._versData);
+    }
+
+    public void CreateNote() {
+        ArrayList<String> res = new ArrayList<String>();
+        int newNoteId = -1;
+        String st;
+        //Parse new tags
+        ArrayList<String> tagData = UpdateTagList(this._noteData.getTags().get());
+
+        /*Sync tag list with server*/
+        st = this._parser.Build(_parser.BuildTagList(this._tagList), CommonData.O_SYNC_TAG_LIST);
+        SendToServer(st);
+        String str = WaitForServer();
+        if (!str.equals("")) {
+            ArrayList<String> buff = this._parser.ParseListOfString(str);
+            if (buff.size() > 2)
+                if (Integer.parseInt(buff.get(0)) == CommonData.O_RESPOND) {
+                    //remove command id
+                    buff.remove(0);
+                    //save new tags
+                    if (buff.size() % 2 == 0)
+                        this._tagList = this._parser.ParseListOfTags(buff);
+                    else {
+                        //TODO: do anything to preserve unsynchronysation of data between server and client
+                    }
+                }
+        }
+
+        //Fill request
+        res.clear();
+        res.add(this._versData.getText().get());
+        res.add(this._noteData.getTitle().get());
+        res.add(this._noteData.getCDate().get());
+        res.add(this._noteData.getMDate().get());
+
+        st = this._parser.Build(res, CommonData.O_CREATE_N);
+        SendToServer(st);
+        str = WaitForServer();
+        if (!str.equals("")) {
+            ArrayList<Integer> buff = this._parser.ParseListOfInteger(str);
+            if (buff.size() > 2)
+                if (buff.get(0) == CommonData.O_RESPOND) {
+                    if (buff.get(1) == CommonData.SERV_YES) {
+                        newNoteId = buff.get(2);
+                    }
+                }
+        }
+
+        // Add tags to created note
+        res.clear();
+        //Convert tags of new note to tag ids
+        res.add(newNoteId + "");
+        ArrayList<Integer> tags = ConvertTagsIntoIds(tagData);
+        if (tags.size() > 0)
+            for (int i = 0; i < tags.size(); i++) {
+                res.add(tags.get(i).toString());
+            }
+
+        st = this._parser.Build(res, CommonData.O_ADD_TAGS_TO_NOTE);
+        SendToServer(st);
+        str = WaitForServer();
+        if (!str.equals("")) {
+            ArrayList<Integer> buff = this._parser.ParseListOfInteger(str);
+            if (buff.size() > 2)
+                if (buff.get(0) == CommonData.O_RESPOND) {
+                    if (buff.get(1) == CommonData.SERV_YES) {
+
+                    }
+                }
+        }
+        _notes.add(_noteData);
+        _versions.add(_versData);
+
     }
 
     private ArrayList<String> UpdateTagList(final String tags) {
         int lastId = 0;
         ArrayList<String> res = new ArrayList<>();
-        if (_tagList.size()>0) {
+        if (_tagList.size() > 0)
             lastId = _tagList.get(_tagList.size()).GetId();
-            StringBuilder str = new StringBuilder();
+        StringBuilder str = new StringBuilder();
+        if (tags.length()>0) {
             for (int i = 0; i < tags.length(); i++) {
-                if (tags.charAt(i)==CommonData.USER_INPUT_TAGS_SEP || (i == (tags.length()-1))){
-                    if (str.length()>0) {
+                if (tags.charAt(i) == CommonData.USER_INPUT_TAGS_SEP) {
+                    if (str.length() > 0) {
                         Tag t = new Tag(lastId, str.toString());
                         if (!t.TagIsInArray(_tagList)) {
                             lastId++;
@@ -343,10 +401,17 @@ public class Client extends Application{
                         res.add(str.toString());
                         str.delete(0, str.length());
                     }
-                }
-                else {
+                } else {
                     str.append(tags.charAt(i));
                 }
+            }
+            if (str.length() > 0) {
+                Tag t = new Tag(lastId, str.toString());
+                if (!t.TagIsInArray(_tagList)) {
+                    lastId++;
+                    _tagList.add(t);
+                }
+                res.add(str.toString());
             }
         }
         return res;
@@ -354,10 +419,9 @@ public class Client extends Application{
 
     private ArrayList<Integer> ConvertTagsIntoIds(final ArrayList<String> tagData) {
         ArrayList<Integer> res = new ArrayList<Integer>();
-        if (_tagList.size()>0 && tagData.size()>0){
-            for (int i = 0; i < tagData.size(); i++)
-            {
-                for (int j = 0; i < _tagList.size(); j++){
+        if (_tagList.size() > 0 && tagData.size() > 0) {
+            for (int i = 0; i < tagData.size(); i++) {
+                for (int j = 0; i < _tagList.size(); j++) {
                     if (_tagList.get(j).GetStrData().equals(tagData.get(i))) {
                         int t = _tagList.get(j).GetId();
                         if (!res.contains(t)) {
@@ -375,14 +439,11 @@ public class Client extends Application{
         String st = _parser.Build(note_id, CommonData.O_SAVE_N);
         SendToServer(st);
         String str = WaitForServer();
-        if (!str.isEmpty())
-        {
+        if (!str.isEmpty()) {
             ArrayList<Integer> buff = _parser.ParseListOfInteger(str);
             if (buff.size() > 1)
-                if (buff.get(0) == CommonData.O_RESPOND)
-                {
-                    if (buff.get(1) == CommonData.SERV_YES)
-                    {
+                if (buff.get(0) == CommonData.O_RESPOND) {
+                    if (buff.get(1) == CommonData.SERV_YES) {
                         _isAuth = true;
                     }
                 }
@@ -393,14 +454,11 @@ public class Client extends Application{
         String st = _parser.Build(note, CommonData.O_DELETE_N);
         SendToServer(st);
         String str = WaitForServer();
-        if (!str.equals(""))
-        {
+        if (!str.equals("")) {
             ArrayList<Integer> buff = _parser.ParseListOfInteger(str);
             if (buff.size() > 1)
-                if (buff.get(0) == CommonData.O_RESPOND)
-                {
-                    if (buff.get(1) == CommonData.SERV_YES)
-                    {
+                if (buff.get(0) == CommonData.O_RESPOND) {
+                    if (buff.get(1) == CommonData.SERV_YES) {
                         _isAuth = true;
                     }
                 }
@@ -411,14 +469,11 @@ public class Client extends Application{
         String st = _parser.Build(tag, CommonData.O_CREATE_T);
         SendToServer(st);
         String str = WaitForServer();
-        if (!str.equals(""))
-        {
+        if (!str.equals("")) {
             ArrayList<Integer> buff = _parser.ParseListOfInteger(str);
             if (buff.size() > 1)
-                if (buff.get(0) == CommonData.O_RESPOND)
-                {
-                    if (buff.get(1) == CommonData.SERV_YES)
-                    {
+                if (buff.get(0) == CommonData.O_RESPOND) {
+                    if (buff.get(1) == CommonData.SERV_YES) {
                         _isAuth = true;
                     }
                 }
@@ -429,14 +484,11 @@ public class Client extends Application{
         String st = _parser.Build(tag, CommonData.O_DELETE_T);
         SendToServer(st);
         String str = WaitForServer();
-        if (!str.isEmpty())
-        {
+        if (!str.isEmpty()) {
             ArrayList<Integer> buff = _parser.ParseListOfInteger(str);
             if (buff.size() > 1)
-                if (buff.get(0) == CommonData.O_RESPOND)
-                {
-                    if (buff.get(1) == CommonData.SERV_YES)
-                    {
+                if (buff.get(0) == CommonData.O_RESPOND) {
+                    if (buff.get(1) == CommonData.SERV_YES) {
                         _isAuth = true;
                     }
                 }
@@ -447,14 +499,11 @@ public class Client extends Application{
         String st = _parser.Build(ver, CommonData.O_DELETE_N_V);
         SendToServer(st);
         String str = WaitForServer();
-        if (!str.isEmpty())
-        {
+        if (!str.isEmpty()) {
             ArrayList<Integer> buff = _parser.ParseListOfInteger(str);
             if (buff.size() > 1)
-                if (buff.get(0) == CommonData.O_RESPOND)
-                {
-                    if (buff.get(1) == CommonData.SERV_YES)
-                    {
+                if (buff.get(0) == CommonData.O_RESPOND) {
+                    if (buff.get(1) == CommonData.SERV_YES) {
 
                     }
                 }
@@ -467,14 +516,11 @@ public class Client extends Application{
         String st = _parser.Build(s, CommonData.O_SEARCH_N);
         SendToServer(st);
         String str = WaitForServer();
-        if (!str.isEmpty())
-        {
+        if (!str.isEmpty()) {
             ArrayList<Integer> buff = _parser.ParseListOfInteger(str);
             if (buff.size() > 1)
-                if (buff.get(0) == CommonData.O_RESPOND)
-                {
-                    if (buff.get(1) == CommonData.SERV_YES)
-                    {
+                if (buff.get(0) == CommonData.O_RESPOND) {
+                    if (buff.get(1) == CommonData.SERV_YES) {
                         _isAuth = true;
                     }
                 }
@@ -486,22 +532,19 @@ public class Client extends Application{
         String st = _parser.Build(s, CommonData.O_GETTAGS);
         SendToServer(st);
         String str = WaitForServer();
-        if (!str.isEmpty())
-        {
+        if (!str.isEmpty()) {
             ArrayList<String> buff = _parser.ParseListOfString(str);
             if ((buff.size() > 2) && (buff.size() % 2 == 0))
-                if (Integer.parseInt(buff.get(0)) == CommonData.O_RESPOND)
-                {
-                    if (Integer.parseInt(buff.get(1)) == CommonData.SERV_YES)
-                    {
+                if (Integer.parseInt(buff.get(0)) == CommonData.O_RESPOND) {
+                    if (Integer.parseInt(buff.get(1)) == CommonData.SERV_YES) {
                         ArrayList<String> foo = buff;
                         foo.remove(0);
                         foo.remove(0);
-                        int tagId=0;
+                        int tagId = 0;
                         String tagData = new String();
-                        for (int i =0; i<(foo.size()/2); i++) {
-                            tagId = Integer.parseInt(foo.get(i*2));
-                            tagData = foo.get(i*2+1);
+                        for (int i = 0; i < (foo.size() / 2); i++) {
+                            tagId = Integer.parseInt(foo.get(i * 2));
+                            tagData = foo.get(i * 2 + 1);
                         }
 
                         _tagList.add(new Tag(tagId, tagData));
@@ -515,14 +558,11 @@ public class Client extends Application{
         String st = _parser.Build(s, CommonData.O_GETNOTEIDS);
         SendToServer(st);
         String str = WaitForServer();
-        if (!str.isEmpty())
-        {
+        if (!str.isEmpty()) {
             ArrayList<Integer> buff = _parser.ParseListOfInteger(str);
             if (buff.size() > 2)
-                if (buff.get(0) == CommonData.O_RESPOND)
-                {
-                    if (buff.get(1) == CommonData.SERV_YES)
-                    {
+                if (buff.get(0) == CommonData.O_RESPOND) {
+                    if (buff.get(1) == CommonData.SERV_YES) {
                         buff.remove(0);
                         buff.remove(0);
                         /*for (int i = 2; i < buff.size(); i++) {
@@ -535,18 +575,15 @@ public class Client extends Application{
 
     public void GetNotePrim(int notePrimId) {
         ArrayList<String> s = new ArrayList<String>();
-        s.add(notePrimId+"");
+        s.add(notePrimId + "");
         String st = _parser.Build(s, CommonData.O_GETNOTEPRIM);
         SendToServer(st);
         String str = WaitForServer();
-        if (!str.isEmpty())
-        {
+        if (!str.isEmpty()) {
             ArrayList<String> buff = _parser.ParseListOfString(str);
             if (buff.size() > 4)
-                if (Integer.parseInt(buff.get(0)) == CommonData.O_RESPOND)
-                {
-                    if (Integer.parseInt(buff.get(1)) == CommonData.SERV_YES)
-                    {
+                if (Integer.parseInt(buff.get(0)) == CommonData.O_RESPOND) {
+                    if (Integer.parseInt(buff.get(1)) == CommonData.SERV_YES) {
                         int _id = Integer.parseInt(buff.get(2));
                         LocalDateTime _cdate = LocalDateTime.parse(buff.get(3));
                         String _data = buff.get(4);
@@ -558,18 +595,15 @@ public class Client extends Application{
 
     public void GetVersDate(final int noteId) {
         ArrayList<String> s = new ArrayList<String>();
-        s.add(noteId+"");
+        s.add(noteId + "");
         String st = _parser.Build(s, CommonData.O_GETVERSDATE);
         SendToServer(st);
         String str = WaitForServer();
-        if (!str.isEmpty())
-        {
+        if (!str.isEmpty()) {
             ArrayList<String> buff = _parser.ParseListOfString(str);
             if (buff.size() > 2)
-                if (Integer.parseInt(buff.get(0)) == CommonData.O_RESPOND)
-                {
-                    if (Integer.parseInt(buff.get(1)) == CommonData.SERV_YES)
-                    {
+                if (Integer.parseInt(buff.get(0)) == CommonData.O_RESPOND) {
+                    if (Integer.parseInt(buff.get(1)) == CommonData.SERV_YES) {
                         /*versDate.clear();
                         for (int i = 0; i<buff.size(); i++)
                             versDate.add(buff.get(i));
@@ -587,14 +621,11 @@ public class Client extends Application{
         String st = _parser.Build(CommonData.O_SETNOTEIDS, s);
         SendToServer(st);
         String str = WaitForServer();
-        if (!str.isEmpty())
-        {
+        if (!str.isEmpty()) {
             ArrayList<Integer> buff = _parser.ParseListOfInteger(str);
             if (buff.size() > 2)
-                if (buff.get(0) == CommonData.O_RESPOND)
-                {
-                    if (buff.get(1) == CommonData.SERV_YES)
-                    {
+                if (buff.get(0) == CommonData.O_RESPOND) {
+                    if (buff.get(1) == CommonData.SERV_YES) {
                         return true;
                     }
                 }
@@ -627,7 +658,7 @@ public class Client extends Application{
 
     public boolean SetTags() {
         ArrayList<String> s = new ArrayList<String>();
-        if (_tagList.size()>0) {
+        if (_tagList.size() > 0) {
             for (int i = 0; i < _tagList.size(); i++) {
                 s.add(_tagList.get(i).GetId() + "");
                 s.add(_tagList.get(i).GetStrData());
@@ -653,17 +684,15 @@ public class Client extends Application{
         String st = _parser.Build(s, CommonData.O_GETCAPTIONS);
         SendToServer(st);
         String str = WaitForServer();
-        if (!str.isEmpty())
-        {
+        if (!str.isEmpty()) {
             ArrayList<String> buff = _parser.ParseListOfString(str);
             if (buff.size() > 2)
-                if (Integer.parseInt(buff.get(0)) == CommonData.O_RESPOND)
-                {
+                if (Integer.parseInt(buff.get(0)) == CommonData.O_RESPOND) {
                     if (Integer.parseInt(buff.get(1)) == CommonData.SERV_YES) {
                         buff.remove(0);
                         buff.remove(0);
                         _notes.clear();
-                        if (buff.size() > 0){
+                        if (buff.size() > 0) {
                             for (int i = 0; i < buff.size(); i++)
                                 _notes.add(new NoteModel(buff.get(i), "", "", ""));
                         }
@@ -684,16 +713,14 @@ public class Client extends Application{
     private String WaitForServer() {
         int i;
         String str = "";
-        for (i = CommonData.RETRIES_COUNT; i > 0 ;i--)
-        {
+        for (i = CommonData.RETRIES_COUNT; i > 0; i--) {
             try {
                 sleep(CommonData.SLEEP_TIME);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            str =  ReceiveData();
-            if (!str.isEmpty())
-            {
+            str = ReceiveData();
+            if (!str.isEmpty()) {
                 break;
             }
         }

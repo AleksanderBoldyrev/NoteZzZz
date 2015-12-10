@@ -48,6 +48,10 @@ public class Tag {
         return this.id;
     }
 
+    public void SetId(final int newId) {
+        this.id = newId;
+    }
+
     public String GetStrData() {
         return this.strData;
     }

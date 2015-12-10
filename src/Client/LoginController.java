@@ -1,11 +1,13 @@
 package Client;
 
 import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 /**
  * Created by Alex on 06.12.2015.
@@ -22,6 +24,7 @@ public class LoginController {
 
     private UserModel _userData;
     private Stage _mainStage;
+    private Client _client;
 
     @FXML
     private void initialize() {
@@ -45,9 +48,14 @@ public class LoginController {
         _mainStage.close();
     }
 
-    public void SetUserData(UserModel data, Stage stage) {
+    public void SetUserData(Client client, UserModel data, Stage stage) {
         _userData = data;
         _mainStage = stage;
+        _mainStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            public void handle(WindowEvent we) {
+                _client.SetStatusExit();
+            }
+        });
     }
 
     private void NotifyUser(final String s) {

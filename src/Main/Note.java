@@ -177,9 +177,12 @@ public class Note {
                     _note.remove(i);
             }
     }
-    public void AddVersion(LocalDateTime date, String data)
+    public int AddVersion(final LocalDateTime date, final String data)
     {
-        NotePrimitive np = new NotePrimitive(_note.get(0).GetID()+1, date, data);
+        int id = _note.get(_note.size()-1).GetID()+1;
+        NotePrimitive np = new NotePrimitive(id, date, data);
+        _note.add(np);
+        return id;
     }
 
     /*void DelNote(int ident) {

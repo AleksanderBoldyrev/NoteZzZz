@@ -86,8 +86,9 @@ public class MainController {
     @FXML
     private void SaveButtonClicked(Event event) {
         _undoBuff = noteData.getText();
+        String ss = LocalDateTime.now().toString();
         if (_isNewNote) {
-            String ss = LocalDateTime.now().toString();
+
             _noteData.setTitle(noteCaption.getText());
             _noteData.setTags(tagList.getText());
             _noteData.setCDate(ss);
@@ -100,6 +101,12 @@ public class MainController {
             //_client.SaveNote(_client.getSelectedVersion());
         }
         else {
+            _versData.setText(noteData.getText());
+            _versData.setTitle(ss);
+            _noteData.setmDate(ss);
+
+            _client.CreateVersion();
+
             //_client.CreateNote(noteData.getText(), noteCaption.getText(), new ArrayList<Integer>());
         }
     }

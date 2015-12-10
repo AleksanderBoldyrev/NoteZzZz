@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 /**
  * Created by A-13XX on 08.10.2015.
- *
+ * <p>
  * Class used to process all the data from our database to the server,
  * in order to parse the structure of data given in DB.
  */
@@ -389,7 +389,7 @@ public class BaseWorker {
      * @return - true in case of verification.
      */
     private boolean VerifyUserId(int id) {
-        return id < _users.size() && id > 0;
+        return id < _users.size() && id >= 0;
     }
 
     /**
@@ -400,7 +400,7 @@ public class BaseWorker {
      * @return - true in case of verification.
      */
     private boolean VerifyTagId(int id) {
-        return id < _tags.size() && id > 0;
+        return id < _tags.size() && id >= 0;
     }
 
     /**
@@ -411,7 +411,7 @@ public class BaseWorker {
      * @return - true in case of verification.
      */
     private boolean VerifyNoteId(int id) {
-        return id < _notes.size() && id > 0;
+        return id < _notes.size() && id >= 0;
     }
 
     /**
@@ -531,9 +531,49 @@ public class BaseWorker {
         }*/
     }
 
-    public int AddTagsToNote(final int noteId, final ArrayList<Integer> tags){
+    public void SyncTags(final ArrayList<Tag> newTags) {
+        boolean found = false;
+        int max = 0;
+        ArrayList<Integer> ids = new ArrayList<Integer>();
+        if (newTags.size() > 0) {
+            if (_tags.size() > 0) {
+                /*First stage - prepare to fix the same id's*/
+                for (int j = 0; j < _tags.size(); j++) {
+                    int t = _tags.get(j).GetId();
+                    ids.add(t);
+                    if (t > max)
+                        max = t;
+                }
+                /*Second stage - try to find new tags*/
+                for (int i = 0; i < newTags.size(); i++) {
+                    found = false;
+                    for (int j = 0; j < _tags.size(); j++) {
+                        if (newTags.get(i).GetStrData().toLowerCase().equals(_tags.get(j).GetStrData().toLowerCase())) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        Tag newTag = newTags.get(i);
+                        if (max < newTag.GetId())
+                            max = newTag.GetId();
+                        if (ids.contains(newTag.GetId())) {
+                            max++;
+                            newTag.SetId(max);
+                        }
+                        _tags.add(newTag);
+                    }
+                }
+
+            } else {
+                _tags = newTags;
+            }
+        }
+    }
+
+    public int AddTagsToNote(final int noteId, final ArrayList<Integer> tags) {
         if (VerifyNoteId(noteId))
-            if (_notes.size()>0)
+            if (_notes.size() > 0)
                 for (int i = 0; i < _notes.size(); i++)
                     if (_notes.get(i).GetId() == noteId) {
                         _notes.get(i).AddTags(tags);
@@ -543,10 +583,10 @@ public class BaseWorker {
     }
 
     public int AddNoteToUser(final int userId, final int noteId) {
-        if (VerifyUserId(userId) && VerifyNoteId(noteId)){
-            if (_users.size()>0)
+        if (VerifyUserId(userId) && VerifyNoteId(noteId)) {
+            if (_users.size() > 0)
                 for (int i = 0; i < _users.size(); i++)
-                    if (_users.get(i).GetId()==userId){
+                    if (_users.get(i).GetId() == userId) {
                         _users.get(i).AddNote(noteId);
                         return 0;
                     }
@@ -557,12 +597,12 @@ public class BaseWorker {
 
     public int AddNote(final String data, final String title, final String cDate, final String mDate) {
         //if (VerifyUserId(userId)) {
-            int m = 0;
-            if (_notes.size() > 0)
-                m = _notes.get(_notes.size()).GetId() + 1;
-            Note n1 = new Note(m, title, data, LocalDateTime.parse(cDate), LocalDateTime.parse(mDate));
-            _notes.add(n1);
-            return m;
+        int m = 0;
+        if (_notes.size() > 0)
+            m = _notes.get(_notes.size()).GetId() + 1;
+        Note n1 = new Note(m, title, data, LocalDateTime.parse(cDate), LocalDateTime.parse(mDate));
+        _notes.add(n1);
+        return m;
         //}
         //File file = new File(fileName);
         /*try
@@ -851,6 +891,7 @@ public class BaseWorker {
 
     /**
      * Getting the number of single note's versions;
+     *
      * @param userId - ID of the user, whose account contains current note;
      * @param noteId - ID of the current note;
      * @return - number of note's versions.
@@ -884,6 +925,20 @@ public class BaseWorker {
 
     public void GetFromBackup() {
 
+    }
+
+    public int AddVersionToNote(int noteId, String text, LocalDateTime time) {
+        int res = CommonData.SERV_NO;
+        if (VerifyNoteId(noteId)){
+            if (_notes.size()>0) {
+                for (int i = 0; i < _notes.size(); i++){
+                    if (_notes.get(i).GetId()==noteId) {
+                        return _notes.get(i).AddVersion(time, text);
+                    }
+                }
+            }
+        }
+        return res;
     }
 }
 
