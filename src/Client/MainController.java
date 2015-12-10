@@ -10,6 +10,7 @@ import com.sun.corba.se.spi.activation.IIOP_CLEAR_TEXT;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -88,7 +89,7 @@ public class MainController {
         _undoBuff = noteData.getText();
         String ss = LocalDateTime.now().toString();
         if (_isNewNote) {
-
+            _isNewNote = false;
             _noteData.setTitle(noteCaption.getText());
             _noteData.setTags(tagList.getText());
             _noteData.setCDate(ss);
@@ -184,7 +185,7 @@ public class MainController {
             NotifyUser("Logout unsuccessful. (:");
     }
 
-    private void NotifyUser(final String s){
+    private void NotifyUser(final String s) {
         infoLabel.setText(s);
     }
 }
