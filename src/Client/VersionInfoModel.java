@@ -17,7 +17,11 @@ public class VersionInfoModel {
     private final StringProperty _text;
     private final IntegerProperty _id;
 
-
+    VersionInfoModel(final VersionInfoModel src){
+        this._title = new SimpleStringProperty(src.getTitle().get());
+        this._text = new SimpleStringProperty(src.getText().get());
+        this._id = new SimpleIntegerProperty(src.getId().get());
+    }
     VersionInfoModel(){
         this._title = new SimpleStringProperty("");
         this._text = new SimpleStringProperty("");

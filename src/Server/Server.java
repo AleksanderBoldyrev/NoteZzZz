@@ -11,11 +11,11 @@ import java.util.ArrayList;
 
 /**
  * Created by Sasha on 30.09.2015.
- *
+ * <p>
  * Class used as a server, so it calls the DB for the data for user and has a special protocol to contact the client.
  */
 
-public class Server extends Thread{
+public class Server extends Thread {
     //private int _port;
     private Socket _socket;
     private BufferedReader _in;
@@ -46,17 +46,19 @@ public class Server extends Thread{
 
     @Override
     public void run() {
-        try{
+        try {
             String str = "";
             String resp = "";
             while (true) {
                 str = _in.readLine();
-                System.out.println("Server received: "+str);
-                if (str.equals(CommonData.TERMCOMMAND))
+                System.out.println("Server received: " + str);
+                if (str.equals(CommonData.TERMCOMMAND)) {
+                    ServerDaemon.sHelper.FlushBases();
                     break;
+                }
                 resp = "";
                 //Parsing
-                if (str.length()>0) {
+                if (str.length() > 0) {
                     ArrayList<String> buff = _parser.ParseListOfString(str);
 
                     try {
@@ -128,10 +130,15 @@ public class Server extends Thread{
                             case CommonData.O_ADD_VERSION:
                                 resp = AddVersion(buff);
                                 break;
+                            case CommonData.O_GET_VERSIONS:
+                                resp = GetVersions(buff);
+                                break;
+                            case CommonData.O_GET_MORE_INFO:
+                                resp = GetMoreInfo(buff);
+                                break;
                         }
 
-                    } catch (NumberFormatException e)
-                    {
+                    } catch (NumberFormatException e) {
                         System.out.println(e.toString());
                     }
 
@@ -140,7 +147,7 @@ public class Server extends Thread{
 
                 if (!resp.equals("")) {
                     _out.println(resp);
-                    System.out.println("Server send: "+resp);
+                    System.out.println("Server send: " + resp);
                 }
 
                 FlushBases();
@@ -151,6 +158,7 @@ public class Server extends Thread{
                     e.printStackTrace();
                 }
             }
+
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -170,33 +178,16 @@ public class Server extends Thread{
 
     public String GetVersionsDate(ArrayList<String> buff) {
         ArrayList<String> res = new ArrayList<String>();
-        if (buff.size()>1) {
+        if (buff.size() > 1) {
             res = ServerDaemon.sHelper.GetNoteVersionsListById(_userId, Integer.parseInt(buff.get(1)));
             res.add(CommonData.SERV_YES + "");
         }
         return _parser.Build(res, CommonData.O_RESPOND);
     }
 
-    public void FlushBases(){
+    public void FlushBases() {
         ServerDaemon.sHelper.FlushBases();
     }
-
-    /*public String SetNotesIds(ArrayList<String> buff) {
-        ArrayList<Integer> res = new ArrayList<Integer>();
-        if (buff.size()>1)
-        for (int i = 0; i < buff.size(); i++) {
-            if (b) id = Integer.parseInt(buff.get(i));
-            else {
-                str = buff.get(i);
-                res.add(new Tag(id, str));
-            }
-            b = !b;
-        }
-        b = ServerDaemon.sHelper.SetTagList(_userId, res);
-        StringBuilder stb = new StringBuilder();
-        stb.append(CommonData.SERV_YES + "");
-        return _parser.Build(stb.toString(), CommonData.O_RESPOND);
-    }*/
 
     public String SetNotePrimitive(ArrayList<String> buff) {
         String res = new String();
@@ -213,26 +204,23 @@ public class Server extends Thread{
     public String GetCaptions(ArrayList<String> buff) {
         ArrayList<String> res = new ArrayList<String>();
         res = ServerDaemon.sHelper.GetNotesTitlesById(_userId);
-        res.add(CommonData.SERV_YES + "");
+        res.add(0, CommonData.SERV_YES+"");
         return _parser.Build(res, CommonData.O_RESPOND);
     }
 
-    public String GetTags(ArrayList<String> buff){
+    public String GetTags(ArrayList<String> buff) {
         ArrayList<Tag> res = new ArrayList<Tag>();
         res = ServerDaemon.sHelper.GetTagList(_userId);
-        StringBuilder stb = new StringBuilder();
-        stb.append(CommonData.SERV_YES + "");
-        stb.append(CommonData.SEP);
+        ArrayList<String> arr = new ArrayList<String>();
+        arr.add(CommonData.SERV_YES + "");
         for (Tag re : res) {
-            stb.append(re.GetId());
-            stb.append(CommonData.SEP);
-            stb.append(re.GetStrData());
-            stb.append(CommonData.SEP);
+            arr.add(re.GetId()+"");
+            arr.add(re.GetStrData());
         }
-        return _parser.Build(stb.toString(), CommonData.O_RESPOND);
+        return _parser.Build(arr, CommonData.O_RESPOND);
     }
 
-    public String SetTags(ArrayList<String> buff){
+    public String SetTags(ArrayList<String> buff) {
         ArrayList<Tag> res = new ArrayList<Tag>();
         boolean b = true;
         int id = 0;
@@ -251,28 +239,27 @@ public class Server extends Thread{
         return _parser.Build(stb.toString(), CommonData.O_RESPOND);
     }
 
-    public String Login(ArrayList<String> buff ) {
+    public String Login(ArrayList<String> buff) {
         ArrayList<String> res = new ArrayList<String>();
 
         int id = CommonData.SERV_NO;
-        if (buff.size()>2) {
+        if (buff.size() > 2) {
             id = ServerDaemon.sHelper.Login(buff.get(1), buff.get(2));
         }
-        if (id>=0) {
+        if (id >= 0) {
             res.add(CommonData.SERV_YES + "");
-            _userId=id;
-        }
-        else
+            _userId = id;
+        } else
             res.add(CommonData.SERV_NO + "");
         //res.add(id+"");
         return _parser.Build(res, CommonData.O_RESPOND);
     }
 
-    public String Logout(ArrayList<String> buff ) {
+    public String Logout(ArrayList<String> buff) {
         StringBuilder res = new StringBuilder();
         boolean suc = false;
         ArrayList<Integer> ar = new ArrayList<Integer>();
-        if (buff.size()>0) {
+        if (buff.size() > 0) {
             suc = ServerDaemon.sHelper.Logout(_userId);
         }
         if (suc)
@@ -282,11 +269,11 @@ public class Server extends Thread{
         return _parser.Build(res.toString(), CommonData.O_RESPOND);
     }
 
-    public String CreateUser(ArrayList<String> buff ) {
+    public String CreateUser(ArrayList<String> buff) {
         ArrayList<String> res = new ArrayList<String>();
 
         boolean suc = false;
-        if (buff.size()>2) {
+        if (buff.size() > 2) {
             suc = ServerDaemon.sHelper.CreateUser(buff.get(1), buff.get(2));
         }
         if (suc)
@@ -300,36 +287,58 @@ public class Server extends Thread{
         //ArrayList<Integer> res = _parser.ParseListOfInteger(in);
         StringBuilder out = new StringBuilder();
         boolean suc = false;
-        if (in.size()>2) {
+        if (in.size() > 2) {
             suc = ServerDaemon.sHelper.DeleteUser(_userId);
         }
         if (suc) {
             out.append(CommonData.SERV_YES);
             _userId = -1;
-        }
-        else
+        } else
             out.append(CommonData.SERV_NO);
         return _parser.Build(out.toString(), CommonData.O_RESPOND);
     }
 
-    public String AddVersion(ArrayList<String> buff){
+    public String AddVersion(ArrayList<String> buff) {
         ArrayList<String> res = new ArrayList<String>();
         int suc = CommonData.SERV_NO;
-        if (buff.size()> 3 ) {
+        if (buff.size() > 3) {
             int noteId = Integer.parseInt(buff.get(1));
             String text = buff.get(2);
             LocalDateTime time = LocalDateTime.parse(buff.get(3));
             suc = ServerDaemon.sHelper.AddVersionToNote(_userId, noteId, text, time);
         }
-        res.add(suc+"");
+        res.add(suc + "");
         return _parser.Build(res, CommonData.O_RESPOND);
     }
 
-    public String SyncTagList(ArrayList<String> buff){
+    private String GetVersions(ArrayList<String> buff) {
+        ArrayList<String> res= new ArrayList<String>();
+        buff.remove(0); //remove operation id
+        if (buff.size() > 0) {
+            int noteId = Integer.parseInt(buff.get(0));
+            res = ServerDaemon.sHelper.GetNoteVersionsListById(_userId, noteId);
+            res.add(0, CommonData.SERV_YES+"");
+        }
+        return _parser.Build(res, CommonData.O_RESPOND);
+    }
+
+    private String GetMoreInfo(ArrayList<String> buff) {
+        ArrayList<String> res= new ArrayList<String>();
+        buff.remove(0); //remove operation id
+        if (buff.size() > 0) {
+            int noteId = Integer.parseInt(buff.get(0));
+            res = ServerDaemon.sHelper.GetMoreInfo(_userId, noteId);
+            res.add(0, CommonData.SERV_YES+"");
+        }
+        return _parser.Build(res, CommonData.O_RESPOND);
+
+    }
+
+    public String SyncTagList(ArrayList<String> buff) {
         String res = new String();
         int suc = CommonData.SERV_NO;
         buff.remove(0); //remove operation id
-        if (buff.size()>0 && (buff.size() % 2 == 0)){
+        if (buff.size() > 0 && (buff.size() % 2 == 0)) {
             ArrayList<Tag> tags = _parser.ParseListOfTags(buff);
             ArrayList<Tag> newTags = ServerDaemon.sHelper.SyncTagList(_userId, tags);
             res = _parser.BuildTagList(newTags);
@@ -337,10 +346,10 @@ public class Server extends Thread{
         return _parser.Build(res, CommonData.O_RESPOND);
     }
 
-    public String AddTagsToNote(ArrayList<Integer> buff){
+    public String AddTagsToNote(ArrayList<Integer> buff) {
         ArrayList<Integer> res = new ArrayList<Integer>();
         int suc = -1;
-        if (buff.size()> 2 ) {
+        if (buff.size() > 2) {
             buff.remove(0); // remove operation id
             int tagId = buff.get(0);
             buff.remove(0); //remove tag id
@@ -350,11 +359,11 @@ public class Server extends Thread{
         return _parser.Build(CommonData.O_RESPOND, res);
     }
 
-    public String CreateNote(ArrayList<String> buff ) {   //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    public String CreateNote(ArrayList<String> buff) {   //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         ArrayList<Integer> res = new ArrayList<Integer>();
         int suc = CommonData.SERV_NO;
         ArrayList<Integer> ar = new ArrayList<Integer>();
-        if (buff.size()>4) {
+        if (buff.size() > 4) {
             suc = ServerDaemon.sHelper.CreateNote(_userId, buff.get(1), buff.get(2), buff.get(3), buff.get(4));
         }
         if (suc >= 0)
@@ -365,26 +374,26 @@ public class Server extends Thread{
         return _parser.Build(CommonData.O_RESPOND, res);
     }
 
-    public String DeleteNote(ArrayList<String> buff ) {
+    public String DeleteNote(ArrayList<String> buff) {
         String res = new String();
         return res;
     }
 
-    public String DeleteNoteByVer(ArrayList<String> buff ) {
+    public String DeleteNoteByVer(ArrayList<String> buff) {
         String res = new String();
         return res;
     }
 
-    public String ChangeUser(ArrayList<String> buff ) {
+    public String ChangeUser(ArrayList<String> buff) {
         String res = new String();
         return res;
     }
 
-    public String SaveNote(ArrayList<String> buff ) {
+    public String SaveNote(ArrayList<String> buff) {
         StringBuilder res = new StringBuilder();
         boolean suc = false;
         //ArrayList<Integer> ar = new ArrayList<Integer>();
-        if (buff.size()>3) {
+        if (buff.size() > 3) {
             suc = ServerDaemon.sHelper.SaveNote(Integer.parseInt(buff.get(1)));
         }
         if (suc)
@@ -394,7 +403,7 @@ public class Server extends Thread{
         return _parser.Build(res.toString(), CommonData.O_RESPOND);
     }
 
-    public String SearchNote(ArrayList<String> buff ) {
+    public String SearchNote(ArrayList<String> buff) {
         String res = new String();
         return res;
     }
@@ -413,37 +422,37 @@ public class Server extends Thread{
         return res;
     }*/
 
-    public String CreateTag(ArrayList<String> buff ) {
+    public String CreateTag(ArrayList<String> buff) {
         String res = new String();
         return res;
     }
 
-    public String DeleteTag(ArrayList<String> buff ) {
+    public String DeleteTag(ArrayList<String> buff) {
         String res = new String();
         return res;
     }
 
-    public String AddTagToRequest(ArrayList<String> buff ) {
+    public String AddTagToRequest(ArrayList<String> buff) {
         String res = new String();
         return res;
     }
 
-    public String GetRequestListByTags(ArrayList<String> buff ) {
+    public String GetRequestListByTags(ArrayList<String> buff) {
         String res = new String();
         return res;
     }
 
-    public String GetTagList(ArrayList<String> buff ) {
+    public String GetTagList(ArrayList<String> buff) {
         String res = new String();
         return res;
     }
 
-    public String HandleRequest(ArrayList<String> buff ) {
+    public String HandleRequest(ArrayList<String> buff) {
         String res = new String();
         return res;
     }
 
-    public String GetNoteTitleList(ArrayList<String> buff ) {
+    public String GetNoteTitleList(ArrayList<String> buff) {
         String res = new String();
         return res;
     }

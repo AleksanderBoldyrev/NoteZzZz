@@ -7,9 +7,9 @@ package Main;
  */
 
 public final class CommonData {
-    public static final String PATH_1 = "F://Base/File_1.txt";      // *
-    public static final String PATH_2 = "F://Base/File_2.txt";      // These are the paths to the DB.
-    public static final String PATH_3 = "F://Base/File_3.txt";      // *
+    public static final String PATH_USERS = "./Base/Users";      // *
+    public static final String PATH_NOTES = "./Base/Notes";      // These are the paths to the DB.
+    public static final String PATH_TAGS = "./Base/Tags";      // *
     public static int PORT = 36550;                                 // Number of port we use.
     public static final String HOST = "localhost";                  // Host name.
     public static final char SEP = '|';                             // Service separator of the sent data.
@@ -21,6 +21,8 @@ public final class CommonData {
     public static final int STEP_TOFLUSHBASE = 3;                   // Number of saves between DB backup.
     public static final int SERV_YES = 1;                           // Positive server respond.
     public static final int SERV_NO = 0;                            // Negative server respond.
+    public static final char NEW_LINE_SYMB = '\n';
+    public static final char NEW_LINE_REPLACEMENT = '\\';
 
     public static final String LOG_W_CAPTION = "Welcome to NoteZ app";
     public static final String MAIN_W_CAPTION = "NoteZ app";
@@ -55,5 +57,7 @@ public final class CommonData {
     public static final int O_ADD_TAGS_TO_NOTE = 21;
     public static final int O_SYNC_TAG_LIST = 22;
     public static final int O_ADD_VERSION = 23;
+    public static final int O_GET_VERSIONS = 24;
+    public static final int O_GET_MORE_INFO = 25;
 
 }

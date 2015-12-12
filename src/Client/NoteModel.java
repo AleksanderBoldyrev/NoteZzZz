@@ -27,12 +27,12 @@ public class NoteModel {
     private final IntegerProperty _id;
 
 
-    public NoteModel(final String title, final String tags, final String cDate, final String mDate) {
+    public NoteModel(final int id, final String title, final String tags, final String cDate, final String mDate) {
         this._title = new SimpleStringProperty(title);
         this._tags = new SimpleStringProperty(tags);
         this._cDate = new SimpleStringProperty(cDate);
         this._mDate = new SimpleStringProperty(mDate);
-        this._id = new SimpleIntegerProperty(-1);
+        this._id = new SimpleIntegerProperty(id);
         //ObservableList<String> observableList = FXCollections.observableArrayList(vers);
         //this._vers = new SimpleListProperty<String>(observableList);
     }
@@ -45,6 +45,16 @@ public class NoteModel {
         //ObservableList<String> observableList = FXCollections.observableArrayList();
         //this._vers = new SimpleListProperty<String>(observableList);
         this._id = new SimpleIntegerProperty(-1);
+    }
+
+    public NoteModel(final NoteModel src) {
+        this._title = new SimpleStringProperty(src.getTitle().get());
+        this._tags = new SimpleStringProperty(src.getTags().get());
+        this._cDate = new SimpleStringProperty(src.getCDate().get());
+        this._mDate = new SimpleStringProperty(src.getMDate().get());
+        //ObservableList<String> observableList = FXCollections.observableArrayList();
+        //this._vers = new SimpleListProperty<String>(observableList);
+        this._id = new SimpleIntegerProperty(src.getId().get());
     }
 
     public void setId(final int id){

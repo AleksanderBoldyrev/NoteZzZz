@@ -120,6 +120,21 @@ public class SecurityHelper {
 
     }
 
+    public synchronized ArrayList<String> GetMoreInfo(int userId, int noteId) {
+        ArrayList<String> res = new ArrayList<String>();
+        _rCount++;
+        if (_activeUsers.contains(userId)){
+            ArrayList<Integer> arr = _dataBase.GetNotesByUserId(userId);
+            boolean flag = false;
+            for (int i = 0; i<arr.size(); i++) {
+                if (arr.get(i)==noteId){
+                    res =  _dataBase.GetMoreInfo(noteId);
+                }
+            }
+        }
+        return res;
+    }
+
     public synchronized ArrayList<String> GetNoteVersionsListById(int userId, int noteId) {
         ArrayList<String> res = new ArrayList<String>();
         _rCount++;

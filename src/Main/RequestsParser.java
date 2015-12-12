@@ -39,7 +39,7 @@ public class RequestsParser {
         res.append(CommonData.SEP);
         if (ar.size()>0) {
             for (String anAr : ar) {
-                res.append(anAr);
+                res.append(fixString(anAr, true));
                 res.append(CommonData.SEP);
             }
         }
@@ -79,11 +79,35 @@ public class RequestsParser {
         StringBuilder res = new StringBuilder();
         res.append(oId);
         res.append(CommonData.SEP);
-        res.append(buff);
+        res.append(fixString(buff, true));
         res.append(CommonData.SEP);
         return res.toString();
     }
 
+    private String fixString(final String str, final boolean dir){
+        String res = new String(str);
+        if (dir) {
+            if (res.length() > 0) {
+                char [] ch = str.toCharArray();
+                for (int i = 0; i<str.length(); i++)
+                    if (ch[i]==CommonData.NEW_LINE_SYMB)
+                        ch[i] = CommonData.NEW_LINE_REPLACEMENT;
+                res = new String(ch);
+                //res.replaceAll("\n", CommonData.NEW_LINE_REPLACEMENT);
+            }
+        }
+        else{
+            if (res.length() > 0) {
+                //res.replaceAll(CommonData.NEW_LINE_REPLACEMENT, "\n");
+                char [] ch = str.toCharArray();
+                for (int i = 0; i<str.length(); i++)
+                    if (ch[i]==CommonData.NEW_LINE_REPLACEMENT)
+                        ch[i] = CommonData.NEW_LINE_SYMB;
+                res = new String(ch);
+            }
+        }
+        return res;
+    }
     /**
      * Procedure used to build serialized string from some data-number
      * and ID of the sought-for operation, in order to simplify the client-server interaction;
@@ -110,6 +134,8 @@ public class RequestsParser {
     public ArrayList<String> ParseListOfString(String str) {
         ArrayList<String> s = new ArrayList<String>();
 
+        str = fixString(str, true);
+
         StringBuilder buff = new StringBuilder();
         for (int i = 0; i < str.length(); i++) {
             if (str.charAt(i) == CommonData.SEP) {
@@ -131,6 +157,8 @@ public class RequestsParser {
     public ArrayList<Integer> ParseListOfInteger(String str) {
         ArrayList<Integer> n = new ArrayList<Integer>();
 
+        str = fixString(str, true);
+
         StringBuilder buff = new StringBuilder();
         for (int i = 0; i < str.length(); i++) {
             if (str.charAt(i) == CommonData.SEP) {
@@ -149,7 +177,7 @@ public class RequestsParser {
      * @return - output note primitive version.
      */
 
-    public NotePrimitive ParseNotePrimitive(String str, int id) {
+    /*public NotePrimitive ParseNotePrimitive(String str, int id) {
         //NotePrimitive np = new NotePrimitive();
 
         byte stage = 0;
@@ -176,7 +204,7 @@ public class RequestsParser {
 
         NotePrimitive np = new NotePrimitive(id, dtbuff, ss);
         return np;
-    }
+    }*/
 
     public ArrayList<Tag> ParseListOfTags(ArrayList<String> str) {
         ArrayList<Tag> t = new ArrayList<Tag>();

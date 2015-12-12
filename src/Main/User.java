@@ -1,6 +1,7 @@
 package Main;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * Created by Sasha on 30.09.2015.
@@ -30,7 +31,7 @@ public class User {
     }
 
     public int AuthUser(String l, String p) {
-        if (l == _login && p == _pass)
+        if (l.equals(_login) && p.equals(_pass))
             return _u_id;
         return -1;
     }

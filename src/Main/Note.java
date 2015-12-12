@@ -143,6 +143,14 @@ public class Note {
         return _tags.size();
     }
 
+    public LocalDateTime GetCDate(){
+        return this._n_cdate;
+    }
+
+    public LocalDateTime GetMDate(){
+        return this._n_mdate;
+    }
+
     public int GetTagById(int id) {
         if (id>(_tags.size()-1))
             id = _tags.size()-1;

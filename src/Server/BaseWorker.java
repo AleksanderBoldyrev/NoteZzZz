@@ -201,7 +201,7 @@ public class BaseWorker {
                             }
                         }
                         break;
-                    case 4:         //*** Creation date of Note Primitive. ***
+                    case 4:         //*** Creation of date of Note Primitive. ***
                         stage++;
                         buffDate = LocalDateTime.parse(buff);
                         break;
@@ -376,9 +376,9 @@ public class BaseWorker {
      * Saving the whole bunch of data into separated database files.
      */
     public void SaveData() {
-        SaveNotes(CommonData.PATH_3);
-        SaveUsers(CommonData.PATH_2);
-        SaveTags(CommonData.PATH_1);
+        SaveNotes(CommonData.PATH_NOTES);
+        SaveUsers(CommonData.PATH_USERS);
+        SaveTags(CommonData.PATH_TAGS);
     }
 
     /**
@@ -478,7 +478,7 @@ public class BaseWorker {
      * @return - tag's ID.
      */
     public int GetTagByName(String name) {
-        int res = -1;
+        int res = CommonData.SERV_NO;
         if (_tags.size() > 0)
             for (int i = 0; i < _tags.size(); i++)
                 if (_tags.get(i).GetStrData().equals(name))
@@ -508,7 +508,7 @@ public class BaseWorker {
     public void AddTag(String t) {
         if (GetTagByName(t) >= 0) {
             int m = 0;
-            if (_tags.size() > 0) m = _tags.get(0).GetId() + 1;
+            if (_tags.size() > 0) m = _tags.get(_tags.size()-1).GetId() + 1;
             Tag t1 = new Tag(m, t);
             _tags.add(t1);
         }
@@ -577,9 +577,9 @@ public class BaseWorker {
                 for (int i = 0; i < _notes.size(); i++)
                     if (_notes.get(i).GetId() == noteId) {
                         _notes.get(i).AddTags(tags);
-                        return 0;
+                        return CommonData.SERV_YES;
                     }
-        return -1;
+        return CommonData.SERV_NO;
     }
 
     public int AddNoteToUser(final int userId, final int noteId) {
@@ -588,16 +588,16 @@ public class BaseWorker {
                 for (int i = 0; i < _users.size(); i++)
                     if (_users.get(i).GetId() == userId) {
                         _users.get(i).AddNote(noteId);
-                        return 0;
+                        return CommonData.SERV_YES;
                     }
 
         }
-        return -1;
+        return CommonData.SERV_NO;
     }
 
     public int AddNote(final String data, final String title, final String cDate, final String mDate) {
         //if (VerifyUserId(userId)) {
-        int m = 0;
+        int m = CommonData.SERV_NO;
         if (_notes.size() > 0)
             m = _notes.get(_notes.size()-1).GetId()+1;
         Note n1 = new Note(m, title, data, LocalDateTime.parse(cDate), LocalDateTime.parse(mDate));
@@ -645,9 +645,9 @@ public class BaseWorker {
      */
     public int AddUser(String _log, String _pass) {
         //if (CheckUser(_log, _pass) >= 0) {
-        int m = 0;
+        int m = CommonData.SERV_NO;
         if (_users.size() > 0)
-            m = _users.get(0).GetId() + 1;
+            m = _users.get(_users.size()-1).GetId() + 1;
         User u1 = new User(m, _log, _pass, new ArrayList<Integer>());
         _users.add(u1);
         return m;
@@ -693,9 +693,9 @@ public class BaseWorker {
      * Initialising the process of loading the whole bunch of data from base.
      */
     public void Initialise() {
-        LoadNotes(CommonData.PATH_3);
-        LoadUsers(CommonData.PATH_2);
-        LoadTags(CommonData.PATH_1);
+        LoadNotes(CommonData.PATH_NOTES);
+        LoadUsers(CommonData.PATH_USERS);
+        LoadTags(CommonData.PATH_TAGS);
     }
 
     /**
@@ -755,8 +755,10 @@ public class BaseWorker {
                 if (_user.GetId() == userId) {
                     ArrayList<Integer> al = _user.GetNotes();
                     for (Note _note : _notes) {
-                        if (al.contains(_note.GetId()))
+                        if (al.contains(_note.GetId())) {
+                            res.add(_note.GetId()+"");
                             res.add(_note.GetTitle());
+                        }
                     }
                     break;
                 }
@@ -796,12 +798,31 @@ public class BaseWorker {
             if (_notes.get(i).GetId() == noteId) {
                 t = _notes.get(i);
                 for (int j = 0; j < t.GetVersionsCount(); j++) {
-                    res.add(t.GetNoteVerDateByPos(j));
+                    NotePrimitive np = t.GetNoteByPos(j);
+                    res.add(np.GetCDate().toString());
+                    res.add(np.GetData());
                 }
             }
         }
         return res;
     }
+
+    public ArrayList<String> GetMoreInfo(final int noteId) {
+        Note t;
+        ArrayList<String> res = new ArrayList<String>();
+        for (int i = 0; i < _notes.size(); i++) {
+            if (_notes.get(i).GetId() == noteId) {
+                t = _notes.get(i);
+                res.add(t.GetCDate().toString());
+                res.add(t.GetMDate().toString());
+                if (t.GetTagsCount()>0)
+                    for (int j = 0; j < t.GetTagsCount(); j++)
+                        res.add(t.GetTagById(j)+"");
+            }
+        }
+        return res;
+    }
+
 
     /**
      * Getting the version of the given note by it's ID.
@@ -886,7 +907,7 @@ public class BaseWorker {
                 if (_notes.get(i).GetId() == id)
                     return i;
             }
-        return 0;
+        return CommonData.SERV_NO;
     }
 
     /**
@@ -904,7 +925,7 @@ public class BaseWorker {
                 }
             }
         }
-        return 0;
+        return CommonData.SERV_NO;
     }
 
     public void DeleteUnusedTags() {

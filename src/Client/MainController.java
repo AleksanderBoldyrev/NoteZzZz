@@ -64,17 +64,19 @@ public class MainController {
 
         _isNewNote = true;
 
+        _mode = 0;
+
         noteColumn.setCellValueFactory(
                 cellData -> cellData.getValue().getTitle());
 
+        versColumn.setCellValueFactory(
+                cellData -> cellData.getValue().getTitle());
         // Clear person details.
-        ShowInfo(null);
+        NoteViewSelected(null);
+        VersViewSelected(null);
 
-        // Listen for selection changes and show the person details when changed.
-        noteView.getSelectionModel().selectedItemProperty().addListener(
-                (observable, oldValue, newValue) -> ShowInfo(newValue));
-        versView.getSelectionModel().selectedItemProperty().addListener(
-                (observable, oldValue, newValue) -> ShowInfo2(newValue));
+        //noteColumn.setResizable(false);
+        //versColumn.setResizable(false);
 
     }
 
@@ -86,6 +88,8 @@ public class MainController {
 
     @FXML
     private void SaveButtonClicked(Event event) {
+        _mode = 1;
+        //_isNewNote = true;
         _undoBuff = noteData.getText();
         String ss = LocalDateTime.now().toString();
         if (_isNewNote) {
@@ -99,7 +103,8 @@ public class MainController {
             _versData.setTitle(ss);
 
             _client.CreateNote();
-            //_client.SaveNote(_client.getSelectedVersion());
+
+            Refresh();
         }
         else {
             _versData.setText(noteData.getText());
@@ -107,8 +112,7 @@ public class MainController {
             _noteData.setmDate(ss);
 
             _client.CreateVersion();
-
-            //_client.CreateNote(noteData.getText(), noteCaption.getText(), new ArrayList<Integer>());
+            Refresh();
         }
     }
 
@@ -120,6 +124,13 @@ public class MainController {
     @FXML
     public void NewNoteButtonClicked(Event event) {
         _isNewNote = true;
+        _mode = 0;
+
+        _client.ClearVersions();
+        this.noteData.setText("");
+        this._undoBuff = "";
+        this.noteCaption.setText("");
+        this.tagList.setText("");
         //_client.CreateNote(noteData.getText(), noteCaption.getText(), new ArrayList<Integer>());
         //_noteData.
         //_client.
@@ -137,43 +148,56 @@ public class MainController {
                 _client.SetStatusExit();
             }
         });
+
+        // Listen for selection changes and show the person details when changed.
+        noteView.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) -> NoteViewSelected(newValue));
+
+        versView.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) -> VersViewSelected(newValue));
+
+        //noteView.refresh();
+        //versView.refresh();
     }
 
-    private void  ShowInfo2(VersionInfoModel data){
-        _isNewNote = false;
+    private void  VersViewSelected(VersionInfoModel data){
+        //_isNewNote = false;
         if (data!= null) {
             if (_mode==1) {
-                _client.setSelectedVersion(versView.getSelectionModel().getSelectedIndex());
-                this.noteData.setText(data.getText().get());
-                _undoBuff = noteData.getText();
+                _isNewNote = false;
+                if (_client.GetVersionsSize()>0) {
+                    _client.setSelectedVersion(versView.getSelectionModel().getSelectedIndex());
+                    this.noteData.setText(data.getText().get());
+                    _undoBuff = this.noteData.getText();
+                }
             }
         }
         else {
-            versColumn.setCellValueFactory(
-                    cellData -> (new VersionInfoModel()).getTitle());
             this.noteData.setText("");
         }
     }
 
-    private void  ShowInfo(NoteModel note){
+    private void  NoteViewSelected(NoteModel note){
         if (note!= null) {
-            _client.setSelectedNote(noteView.getSelectionModel().getSelectedIndex());
-            this.tagList.setText(note.getTags().get());
-            this.noteCaption.setText(note.getTitle().get());
-            _client.ReFill();
-            versColumn.setCellValueFactory(
-                    cellData -> cellData.getValue().getTitle());
-            versView.refresh();
-            _mode = 1;
+            if (_client.GetNotesSize()>0) {
+                _client.setSelectedNote(noteView.getSelectionModel().getSelectedIndex());
+                this.tagList.setText(note.getTags().get());
+                this.noteCaption.setText(note.getTitle().get());
+                _client.SomeNoteSelected();
+                //versView.
+                //noteView.refresh();
+                _mode = 1;
+            }
         }
         else {
+            _mode = 0;
             this.tagList.setText("");
             this.noteCaption.setText("");
         }
     }
 
     public void AboutButtonClicked(Event event) {
-        NotifyUser("Cool Code!");
+        NotifyUser("The NoteZ application. A-13XX, 2015.");
     }
 
     public void Logout(Event event) {
@@ -187,5 +211,12 @@ public class MainController {
 
     private void NotifyUser(final String s) {
         infoLabel.setText(s);
+    }
+
+    private void Refresh() {
+        this.versColumn.setVisible(false);
+        this.noteColumn.setVisible(false);
+        this.versColumn.setVisible(true);
+        this.noteColumn.setVisible(true);
     }
 }
