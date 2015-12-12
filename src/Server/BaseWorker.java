@@ -23,9 +23,9 @@ public class BaseWorker {
     private String _notesBasePath;
 
     BaseWorker() {
-        _users = new ArrayList<User>();
-        _notes = new ArrayList<Note>();
-        _tags = new ArrayList<Tag>();
+        this._users = new ArrayList<User>();
+        this._notes = new ArrayList<Note>();
+        this._tags = new ArrayList<Tag>();
     }
 
     /**
@@ -37,8 +37,8 @@ public class BaseWorker {
      */
 
     public int CheckUser(String log, String pass) {
-        if (_users.size() > 0) {
-            for (User _user : _users) {
+        if (this._users.size() > 0) {
+            for (User _user : this._users) {
                 if (_user.GetName().equals(log))
                     if (_user.GetPass().equals(pass))
                         return _user.GetId();
@@ -48,8 +48,8 @@ public class BaseWorker {
     }
 
     public boolean DoesUserExist(String log) {
-        if (_users.size() > 0) {
-            for (User _user : _users) {
+        if (this._users.size() > 0) {
+            for (User _user : this._users) {
                 if (_user.GetName().equals(log))
                     return true;
             }
@@ -122,7 +122,7 @@ public class BaseWorker {
                                 notes_id.append(buff.charAt(j));
                             }
                         }
-                        _users.add(new User(buffId, buffLogin, buffPass, buffNotesId));
+                        this._users.add(new User(buffId, buffLogin, buffPass, buffNotesId));
                         break;
                 }
                 buff.delete(0, buff.length());
@@ -214,7 +214,7 @@ public class BaseWorker {
                             readOfPrimitivesCount++;
                         } else {
                             stage = 0; //end of reading note primitives
-                            _notes.add(new Note(buffId, buffTagsId, buffNoteVers, buffTitle));
+                            this._notes.add(new Note(buffId, buffTagsId, buffNoteVers, buffTitle));
                             buffTagsId.clear();
                             buffNoteVers.clear();
                             readOfPrimitivesCount = 0;
@@ -268,7 +268,7 @@ public class BaseWorker {
                 } else if (stage == 1) {
                     buffData = buff.toString();
                     stage--;
-                    _tags.add(new Tag(buffId, buffData));
+                    this._tags.add(new Tag(buffId, buffData));
                 }
                 buff.delete(0, buff.length());
             } else buff.append(str.charAt(i));
@@ -288,7 +288,7 @@ public class BaseWorker {
                 file.createNewFile();
             PrintWriter out = new PrintWriter(file.getAbsoluteFile());
 
-            for (User _user : _users) {
+            for (User _user : this._users) {
                 out.print(_user.GetId());
                 out.print(CommonData.SEP);
                 out.print(_user.GetName());
@@ -320,7 +320,7 @@ public class BaseWorker {
                 file.createNewFile();
             PrintWriter out = new PrintWriter(file.getAbsoluteFile());
 
-            for (Note _note : _notes) {
+            for (Note _note : this._notes) {
                 out.print(_note.GetId());
                 out.print(CommonData.SEP);
                 out.print(_note.GetTitle());
@@ -360,7 +360,7 @@ public class BaseWorker {
                 file.createNewFile();
             PrintWriter out = new PrintWriter(file.getAbsoluteFile());
 
-            for (Tag _tag : _tags) {
+            for (Tag _tag : this._tags) {
                 out.print(_tag.GetId());
                 out.print(CommonData.SEP);
                 out.print(_tag.GetStrData());
@@ -389,7 +389,7 @@ public class BaseWorker {
      * @return - true in case of verification.
      */
     private boolean VerifyUserId(int id) {
-        return id < _users.size() && id >= 0;
+        return id < this._users.size() && id >= 0;
     }
 
     /**
@@ -400,7 +400,7 @@ public class BaseWorker {
      * @return - true in case of verification.
      */
     private boolean VerifyTagId(int id) {
-        return id < _tags.size() && id >= 0;
+        return id < this._tags.size() && id >= 0;
     }
 
     /**
@@ -411,7 +411,7 @@ public class BaseWorker {
      * @return - true in case of verification.
      */
     private boolean VerifyNoteId(int id) {
-        return id < _notes.size() && id >= 0;
+        return id < this._notes.size() && id >= 0;
     }
 
     /**
@@ -422,7 +422,7 @@ public class BaseWorker {
      */
     public void SetNoteCaption(int id, String data) {
         if (VerifyNoteId(id)) {
-            _notes.get(id).SetTitle(data);
+            this._notes.get(id).SetTitle(data);
         }
     }
 
@@ -434,7 +434,7 @@ public class BaseWorker {
      */
     public void SetNoteTags(int id, ArrayList<Integer> t) {
         if (VerifyNoteId(id)) {
-            _notes.get(id).SetTags(t);
+            this._notes.get(id).SetTags(t);
         }
     }
 
@@ -446,7 +446,7 @@ public class BaseWorker {
      */
     public void RemoveNoteVer(int id, int ver) {
         if (VerifyNoteId(id))
-            _notes.get(id).DelVersion(ver);
+            this._notes.get(id).DelVersion(ver);
     }
 
     /**
@@ -457,7 +457,7 @@ public class BaseWorker {
      */
     public void SetUserName(int id, String data) {
         if (VerifyUserId(id))
-            _users.get(id).SetLogin(data);
+            this._users.get(id).SetLogin(data);
     }
 
     /**
@@ -573,10 +573,10 @@ public class BaseWorker {
 
     public int AddTagsToNote(final int noteId, final ArrayList<Integer> tags) {
         if (VerifyNoteId(noteId))
-            if (_notes.size() > 0)
-                for (int i = 0; i < _notes.size(); i++)
-                    if (_notes.get(i).GetId() == noteId) {
-                        _notes.get(i).AddTags(tags);
+            if (this._notes.size() > 0)
+                for (int i = 0; i < this._notes.size(); i++)
+                    if (this._notes.get(i).GetId() == noteId) {
+                        this._notes.get(i).AddTags(tags);
                         return CommonData.SERV_YES;
                     }
         return CommonData.SERV_NO;
@@ -584,10 +584,10 @@ public class BaseWorker {
 
     public int AddNoteToUser(final int userId, final int noteId) {
         if (VerifyUserId(userId) && VerifyNoteId(noteId)) {
-            if (_users.size() > 0)
-                for (int i = 0; i < _users.size(); i++)
-                    if (_users.get(i).GetId() == userId) {
-                        _users.get(i).AddNote(noteId);
+            if (this._users.size() > 0)
+                for (int i = 0; i < this._users.size(); i++)
+                    if (this._users.get(i).GetId() == userId) {
+                        this._users.get(i).AddNote(noteId);
                         return CommonData.SERV_YES;
                     }
 
@@ -598,10 +598,10 @@ public class BaseWorker {
     public int AddNote(final String data, final String title, final String cDate, final String mDate) {
         //if (VerifyUserId(userId)) {
         int m = CommonData.SERV_NO;
-        if (_notes.size() > 0)
-            m = _notes.get(_notes.size()-1).GetId()+1;
+        if (this._notes.size() > 0)
+            m = this._notes.get(this._notes.size()-1).GetId()+1;
         Note n1 = new Note(m, title, data, LocalDateTime.parse(cDate), LocalDateTime.parse(mDate));
-        _notes.add(n1);
+        this._notes.add(n1);
         return m;
         //}
         //File file = new File(fileName);

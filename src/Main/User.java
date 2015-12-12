@@ -13,26 +13,26 @@ public class User {
     private String _login;
     private String _pass;
     private int _u_id;
-    private ArrayList<Integer> _notes;
+    private ArrayList<Integer> _notes_u;
 
     public User(int id, String buffLogin, String buffPass, ArrayList<Integer> notes) {
-        _u_id = id;
-        System.out.print(_u_id + "|");
-        _login = buffLogin;
-        System.out.print(_login + "|");
-        _pass = buffPass;
-        System.out.print(_pass + "|");
-        _notes = new ArrayList<Integer>();
+        this._u_id = id;
+        System.out.print(this._u_id + "|");
+        this._login = buffLogin;
+        System.out.print(this._login + "|");
+        this._pass = buffPass;
+        System.out.print(this._pass + "|");
+        this._notes_u = new ArrayList<Integer>();
         for (int i = 0; i < notes.size(); i++) {
-            _notes.add(i, notes.get(i));
-            System.out.print(_notes.get(i) + ".");
+            this._notes_u.add(i, notes.get(i));
+            System.out.print(this._notes_u.get(i) + ".");
         }
         System.out.println("|");
     }
 
     public int AuthUser(String l, String p) {
-        if (l.equals(_login) && p.equals(_pass))
-            return _u_id;
+        if (l.equals(this._login) && p.equals(this._pass))
+            return this._u_id;
         return -1;
     }
 
@@ -42,28 +42,28 @@ public class User {
     //public void SetId(int id) { this._u_id = id; }
     public String GetName() { return this._login; }
     public String GetPass() { return this._pass; }
-    public int GetNotesCount() { return this._notes.size(); }
-    public int GetNoteByPos(int i) { return this._notes.get(i); }
-    public ArrayList<Integer> GetNotes() {return _notes; }
+    public int GetNotesCount() { return this._notes_u.size(); }
+    public int GetNoteByPos(int i) { return this._notes_u.get(i); }
+    public ArrayList<Integer> GetNotes() {return this._notes_u; }
 
     public void SetLogin(String name) {
-        _login = name;
+        this._login = name;
     }
-    public void SetId(int _id) { _u_id = _id; }
+    public void SetId(int _id) { this._u_id = _id; }
     public void SetPass(String p) {
-        _pass = p;
+        this._pass = p;
     }
-    public void SetNoteList(ArrayList<Integer> _n) {_notes  = _n; }
+    public void SetNoteList(ArrayList<Integer> _n) {this._notes_u  = _n; }
 
     public void RemoveNote(int noteId)  {
-        if (_notes.size()>0)
-            for (int i=0; i<_notes.size(); i++)
-                if (_notes.get(i)==noteId) {
-                    _notes.remove(i);
+        if (this._notes_u.size()>0)
+            for (int i=0; i<this._notes_u.size(); i++)
+                if (this._notes_u.get(i)==noteId) {
+                    this._notes_u.remove(i);
                 }
     }
 
     public void AddNote(int noteId)  {
-        _notes.add(noteId);
+        this._notes_u.add(noteId);
     }
 }

@@ -33,53 +33,53 @@ public class Note {
 
 
     public Note (final int id, final String title, final String data, final LocalDateTime cDate, final LocalDateTime mDate){
-        _id = id;
-        _title = title;
-        _tags = new ArrayList<Integer>();
-        _n_cdate = cDate;
-        _n_mdate = mDate;
-        _note = new ArrayList<NotePrimitive>();
-        _note.add(new NotePrimitive(0, mDate, data));
+        this._id = id;
+        this._title = title;
+        this._tags = new ArrayList<Integer>();
+        this._n_cdate = cDate;
+        this._n_mdate = mDate;
+        this._note = new ArrayList<NotePrimitive>();
+        this._note.add(new NotePrimitive(0, mDate, data));
     }
 
     public Note (int id, ArrayList<Integer> tags, ArrayList<NotePrimitive> notes, String title) {
-        _note = new ArrayList<NotePrimitive>();
-        _note.clear();
-        _id = id;
-        _title = title;
+        this._note = new ArrayList<NotePrimitive>();
+        this._note.clear();
+        this._id = id;
+        this._title = title;
         //System.out.print(id + "|");
-        _tags = new ArrayList<Integer>();
-        _tags.clear();
+        this._tags = new ArrayList<Integer>();
+        this._tags.clear();
         for (int i = 0; i < tags.size(); i++) {
-            _tags.add(i, tags.get(i));
+            this._tags.add(i, tags.get(i));
             //System.out.print(_tags.get(i) + ".");
         }
         //System.out.print(" | ");
-        _note = new ArrayList<NotePrimitive>();
+        this._note = new ArrayList<NotePrimitive>();
         for (int i = 0; i < notes.size(); i++) {
-            _note.add(i, notes.get(i));
+            this._note.add(i, notes.get(i));
             //System.out.print((_note.get(i)).GetID() + "|" + (_note.get(i)).GetData() + "|");
         }
         //System.out.println( "|");
-        if (_note.size() > 0) {
-            _n_cdate = (_note.get(0)).GetCDate();
-            _n_mdate = (_note.get(_note.size() - 1)).GetCDate();
+        if (this._note.size() > 0) {
+            this._n_cdate = (this._note.get(0)).GetCDate();
+            this._n_mdate = (this._note.get(this._note.size() - 1)).GetCDate();
         }
         else {
-            _n_cdate = LocalDateTime.now();
-            _n_mdate = LocalDateTime.now();
+            this._n_cdate = LocalDateTime.now();
+            this._n_mdate = LocalDateTime.now();
         }
         //System.out.println(_n_cdate + "|" + _n_mdate + "|");
     }
 
     public NotePrimitive getNote() {
-        if (_id > _note.size()) _id = 0;
-        return _note.get(0);
+        if (this._id > this._note.size()) this._id = 0;
+        return this._note.get(0);
     }
 
     public String GetNoteVerDateByPos(int pos) {
-        if (_note.size()>0 && _note.size() < pos)
-            return _note.get(pos).GetCDate().toString();
+        if (this._note.size()>0 && this._note.size() < pos)
+            return this._note.get(pos).GetCDate().toString();
         return "";
     }
 
@@ -121,26 +121,26 @@ public class Note {
     }*/
 
     public int GetVersionsCount() {
-        return _note.size();
+        return this._note.size();
     }
 
     public NotePrimitive GetNoteByPos(int pos) {
-        if (pos>(_note.size()-1))
-            pos = _note.size()-1;
+        if (pos>(this._note.size()-1))
+            pos = this._note.size()-1;
         if (pos<0)
             pos = 0;
-        return _note.get(pos);
+        return this._note.get(pos);
     }
 
 
     public int GetId() {
-        return _id;
+        return this._id;
     }
 
-    public String GetTitle() {return _title; }
+    public String GetTitle() {return this._title; }
 
     public  int GetTagsCount() {
-        return _tags.size();
+        return this._tags.size();
     }
 
     public LocalDateTime GetCDate(){
@@ -152,45 +152,45 @@ public class Note {
     }
 
     public int GetTagById(int id) {
-        if (id>(_tags.size()-1))
-            id = _tags.size()-1;
+        if (id>(this._tags.size()-1))
+            id = this._tags.size()-1;
         if (id<0)
             id = 0;
 
-        if (_tags.size() > 0) return _tags.get(id);
+        if (this._tags.size() > 0) return this._tags.get(id);
         else return 0;
     }
 
     public void SetTitle(String data)
     {
-        _title = data;
+        this._title = data;
     }
 
     public void SetTags(ArrayList<Integer> _tagIds)
     {
-        _tags = _tagIds;
+        this._tags = _tagIds;
     }
 
     public void AddTags(final ArrayList<Integer> tagList){
         if (tagList.size()>0)
             for (int i = 0; i < tagList.size(); i++)
-                _tags.add(tagList.get(i));
+                this._tags.add(tagList.get(i));
     }
 
     public void DelVersion(int _targetId)
     {
-        if (_note.size()>1)
-            for (int i=0; i < _note.size(); i++)
+        if (this._note.size()>1)
+            for (int i=0; i < this._note.size(); i++)
             {
-                if (_note.get(i).GetID()==_targetId)
-                    _note.remove(i);
+                if (this._note.get(i).GetID()==_targetId)
+                    this._note.remove(i);
             }
     }
     public int AddVersion(final LocalDateTime date, final String data)
     {
-        int id = _note.get(_note.size()-1).GetID()+1;
+        int id = this._note.get(this._note.size()-1).GetID()+1;
         NotePrimitive np = new NotePrimitive(id, date, data);
-        _note.add(np);
+        this._note.add(np);
         return id;
     }
 

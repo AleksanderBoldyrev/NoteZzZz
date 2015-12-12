@@ -40,8 +40,8 @@ public class Tag {
     private String strData;
 
     public Tag (int _id, String _str) {
-        id = _id;
-        strData = _str;
+        this.id = _id;
+        this.strData = _str;
     }
 
     public int GetId() {

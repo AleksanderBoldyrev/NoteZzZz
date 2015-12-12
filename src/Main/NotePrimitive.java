@@ -15,55 +15,55 @@ public class NotePrimitive {
     private int _id;
 
     public NotePrimitive() {
-        _data = "";
-        _cdate = LocalDateTime.now();
-        _id = 0;
+        this._data = "";
+        this._cdate = LocalDateTime.now();
+        this._id = 0;
     }
 
     public NotePrimitive(String s, int ident) {
-        _data = s;
-        _cdate = LocalDateTime.now();
-        _id = ident;
+        this._data = s;
+        this._cdate = LocalDateTime.now();
+        this._id = ident;
     }
 
     public NotePrimitive(int id, LocalDateTime date, String data) {
-        _data = data;
-        _cdate = date;
-        _id = id;
+        this._data = data;
+        this._cdate = date;
+        this._id = id;
     }
 
-    public String GetData() { return _data; }
-    public LocalDateTime GetCDate() {return _cdate; }
+    public String GetData() { return this._data; }
+    public LocalDateTime GetCDate() {return this._cdate; }
     public void SetData(String ns)
     {
-        _data = ns;
+        this._data = ns;
     }
     public void SetCDate(LocalDateTime nd)
     {
-        _cdate = nd;
+        this._cdate = nd;
     }
     public int GetID() {
-        return _id;
+        return this._id;
     }
 
     public void ChangeNote(int pos, String newData) {
-        for (int i = 0; i < (pos+newData.length()-_data.length()); i++)
-            _data+=" ";
-        char arr[] = _data.toCharArray();
+        for (int i = 0; i < (pos+newData.length()-this._data.length()); i++)
+            this._data+=" ";
+        char arr[] = this._data.toCharArray();
         for (int i = pos; i < pos + newData.length(); i++)
             arr[i] = newData.charAt(i - pos);
-        _data = new String(arr);
+        this._data = new String(arr);
     }
 
     public void DelSubstr(int beg, int end) {
         int swapper = (beg > end) ? beg : end;
         beg = (beg > end) ? end : beg;
         end = swapper;
-        String ss = _data;
-        _data = "";
+        String ss = this._data;
+        this._data = "";
         for (int i = 0; i<ss.length(); i++)
             if ((i<beg) && (i>end))
-                _data+=ss.charAt(i);
+                this._data+=ss.charAt(i);
     }
 }
 
