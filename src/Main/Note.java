@@ -177,14 +177,16 @@ public class Note {
                 this._tags.add(tagList.get(i));
     }
 
-    public void DelVersion(int _targetId)
-    {
+    public int DelVersion(int _targetId) {
         if (this._note_n.size()>1)
-            for (int i=0; i < this._note_n.size(); i++)
-            {
-                if (this._note_n.get(i).GetID()==_targetId)
+            for (int i=0; i < this._note_n.size(); i++) {
+                if (this._note_n.get(i).GetID()==_targetId) {
                     this._note_n.remove(i);
+                    return CommonData.SERV_YES;
+                }
+
             }
+        return CommonData.SERV_NO;
     }
     public int AddVersion(final LocalDateTime date, final String data)
     {

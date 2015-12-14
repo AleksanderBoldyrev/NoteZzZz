@@ -1,5 +1,7 @@
 package Main;
 
+import jdk.nashorn.internal.runtime.Debug;
+
 /**
  * Created by Alex on 04.11.2015.
  *
@@ -22,7 +24,8 @@ public final class CommonData {
     public static final int SERV_YES = 1;                           // Positive server respond.
     public static final int SERV_NO = 0;                            // Negative server respond.
     public static final char NEW_LINE_SYMB = '\n';
-    public static final char NEW_LINE_REPLACEMENT = '\\';
+    public static final char NEW_LINE_REPLACEMENT = '~';
+    public static final String SEPARATOR_REPLACEMENT = "\\/";
 
     public static final String LOG_W_CAPTION = "Welcome to NoteZ app";
     public static final String MAIN_W_CAPTION = "NoteZ app";
@@ -59,5 +62,4 @@ public final class CommonData {
     public static final int O_ADD_VERSION = 23;
     public static final int O_GET_VERSIONS = 24;
     public static final int O_GET_MORE_INFO = 25;
-
 }

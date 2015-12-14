@@ -173,10 +173,24 @@ public class SecurityHelper {
         return -1;
     }
 
-    public synchronized void DeleteNote(int noteId, int userId) { //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    public synchronized int DeleteNote(final int userId, final int noteId) { //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         if (_activeUsers.contains(userId))
-            if (HaveUserNote(userId, noteId))
-                _dataBase.DeleteNote(noteId, userId);
+            if (HaveUserNote(userId, noteId)) {
+                int res = _dataBase.DeleteNote(noteId);
+                if (res == CommonData.SERV_YES) {
+                    _dataBase.DeleteNoteFromUser(userId, noteId);
+                    return res;
+                }
+            }
+        return CommonData.SERV_NO;
+    }
+
+    public synchronized int DeleteVersion(final int userId, final int noteId, final int versId) { //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        if (_activeUsers.contains(userId))
+            if (HaveUserNote(userId, noteId)) {
+                return _dataBase.DeleteVersion(noteId, versId);
+            }
+        return CommonData.SERV_NO;
     }
 
     public synchronized void GetUserNoteHeaderList() {

@@ -376,18 +376,25 @@ public class Server extends Thread {
     }
 
     public String DeleteNote(ArrayList<String> buff) {
-        String res = new String();
-        return res;
+        int suc = CommonData.SERV_NO;
+        //ArrayList<Integer> ar = new ArrayList<Integer>();
+        if (buff.size() > 1) {
+            int noteId = Integer.parseInt(buff.get(1));
+            suc = ServerDaemon.sHelper.DeleteNote(_userId, noteId);
+        }
+        return _parser.Build(suc, CommonData.O_RESPOND);
     }
+
 
     public String DeleteNoteByVer(ArrayList<String> buff) {
-        String res = new String();
-        return res;
-    }
-
-    public String ChangeUser(ArrayList<String> buff) {
-        String res = new String();
-        return res;
+        int suc = CommonData.SERV_NO;
+        //ArrayList<Integer> ar = new ArrayList<Integer>();
+        if (buff.size() > 2) {
+            int noteId = Integer.parseInt(buff.get(1));
+            int versId = Integer.parseInt(buff.get(2));
+            suc = ServerDaemon.sHelper.DeleteVersion(_userId, noteId, versId);
+        }
+        return _parser.Build(suc, CommonData.O_RESPOND);
     }
 
     public String SaveNote(ArrayList<String> buff) {

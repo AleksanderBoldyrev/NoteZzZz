@@ -509,7 +509,7 @@ public class BaseWorker {
     public void AddTag(String t) {
         if (GetTagByName(t) >= 0) {
             int m = 0;
-            if (_tags.size() > 0) m = _tags.get(_tags.size()-1).GetId() + 1;
+            if (_tags.size() > 0) m = _tags.get(_tags.size() - 1).GetId() + 1;
             Tag t1 = new Tag(m, t);
             _tags.add(t1);
         }
@@ -601,9 +601,9 @@ public class BaseWorker {
         //if (VerifyUserId(userId)) ;
         int m;
         if (this._notes.size() > 0)
-            m = this._notes.get(this._notes.size()-1).GetId()+1;
+            m = this._notes.get(this._notes.size() - 1).GetId() + 1;
         else
-            m=0;
+            m = 0;
         Note n1 = new Note(m, title, data, LocalDateTime.parse(cDate), LocalDateTime.parse(mDate));
         this._notes.add(n1);
         return m;
@@ -651,7 +651,7 @@ public class BaseWorker {
         //if (CheckUser(_log, _pass) >= 0) {
         int m = CommonData.SERV_NO;
         if (_users.size() > 0)
-            m = _users.get(_users.size()-1).GetId() + 1;
+            m = _users.get(_users.size() - 1).GetId() + 1;
         User u1 = new User(m, _log, _pass, new ArrayList<Integer>());
         _users.add(u1);
         System.out.println("User number " + m + " is created.");
@@ -676,22 +676,35 @@ public class BaseWorker {
         }
     }
 
-    /**
-     * Deleting a note by user ID;
-     *
-     * @param userId - user account ID.
-     */
-    public void DeleteNote(int noteId, int userId) { //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    public void DeleteNoteFromUser(final int userId, final int noteId){
         if (VerifyUserId(userId)) {
-            //Remove notes
-            if (_users.get(userId).GetNotesCount() > 0) {
-                ArrayList<Integer> un = _users.get(userId).GetNotes();
-                for (int j = 0; j < _notes.size(); j++) {
-                    if (un.get(j).equals(noteId))
-                        _notes.remove(j);
+            if (_users.size() > 0) {
+                for (int i = 0; i < _users.size(); i++) {
+                    if (_users.get(i).GetId() == userId) {
+                        _users.get(i).RemoveNote(noteId);
+                    }
                 }
             }
         }
+    }
+
+    /**
+     * Deleting a note by user ID;
+     *
+     * @param noteId - note ID.
+     */
+    public int DeleteNote(final int noteId) { //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        if (VerifyNoteId(noteId)) {
+            if (_notes.size() > 0) {
+                for (int i = 0; i < _notes.size(); i++) {
+                    if (_notes.get(i).GetId() == noteId) {
+                        _notes.remove(i);
+                        return CommonData.SERV_YES;
+                    }
+                }
+            }
+        }
+        return CommonData.SERV_NO;
     }
 
     /**
@@ -761,7 +774,7 @@ public class BaseWorker {
                     ArrayList<Integer> al = _user.GetNotes();
                     for (Note _note : _notes) {
                         if (al.contains(_note.GetId())) {
-                            res.add(_note.GetId()+"");
+                            res.add(_note.GetId() + "");
                             res.add(_note.GetTitle());
                         }
                     }
@@ -820,9 +833,9 @@ public class BaseWorker {
                 t = _notes.get(i);
                 res.add(t.GetCDate().toString());
                 res.add(t.GetMDate().toString());
-                if (t.GetTagsCount()>0)
+                if (t.GetTagsCount() > 0)
                     for (int j = 0; j < t.GetTagsCount(); j++)
-                        res.add(t.GetTagById(j)+"");
+                        res.add(t.GetTagById(j) + "");
             }
         }
         return res;
@@ -955,16 +968,29 @@ public class BaseWorker {
 
     public int AddVersionToNote(int noteId, String text, LocalDateTime time) {
         int res = CommonData.SERV_NO;
-        if (VerifyNoteId(noteId)){
-            if (_notes.size()>0) {
-                for (int i = 0; i < _notes.size(); i++){
-                    if (_notes.get(i).GetId()==noteId) {
+        if (VerifyNoteId(noteId)) {
+            if (_notes.size() > 0) {
+                for (int i = 0; i < _notes.size(); i++) {
+                    if (_notes.get(i).GetId() == noteId) {
                         return _notes.get(i).AddVersion(time, text);
                     }
                 }
             }
         }
         return res;
+    }
+
+    public int DeleteVersion(int noteId, int versId) {
+        if (VerifyNoteId(noteId)) {
+            if (_notes.size() > 0) {
+                for (int i = 0; i < _notes.size(); i++) {
+                    if (_notes.get(i).GetId() == noteId) {
+                        return _notes.get(i).DelVersion(versId);
+                    }
+                }
+            }
+        }
+        return CommonData.SERV_NO;
     }
 }
 

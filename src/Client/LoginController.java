@@ -1,5 +1,6 @@
 package Client;
 
+import Main.CommonData;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -28,6 +29,7 @@ public class LoginController {
 
     @FXML
     private void initialize() {
+        serverName.setText(CommonData.HOST+":"+CommonData.PORT);
     }
 
     @FXML
@@ -51,14 +53,19 @@ public class LoginController {
     public void SetUserData(Client client, UserModel data, Stage stage) {
         _userData = data;
         _mainStage = stage;
-        /*_mainStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+        _client = client;
+        _mainStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             public void handle(WindowEvent we) {
                 _client.SetStatusExit();
             }
-        });*/
+        });
     }
 
     private void NotifyUser(final String s) {
         infoLabel.setText(s);
+    }
+
+    public void DeleteUserButtonClicked(Event event) {
+
     }
 }

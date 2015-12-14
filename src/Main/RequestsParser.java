@@ -85,29 +85,46 @@ public class RequestsParser {
     }
 
     private String fixString(final String str, final boolean dir){
-        String res = new String(str);
+        //System.out.print("In fix: "+str+" "+dir);
+        StringBuilder out = new StringBuilder();
         if (dir) {
-            if (res.length() > 0) {
-                char [] ch = str.toCharArray();
+            if (str.length() > 0) {
+
                 for (int i = 0; i<str.length(); i++)
-                    if (ch[i]==CommonData.NEW_LINE_SYMB)
-                        ch[i] = CommonData.NEW_LINE_REPLACEMENT;
-                res = new String(ch);
-                //res.replaceAll("\n", CommonData.NEW_LINE_REPLACEMENT);
+                    if (str.charAt(i)==CommonData.NEW_LINE_SYMB)
+                        out.append(CommonData.NEW_LINE_REPLACEMENT);
+                else
+                        out.append(str.charAt(i));
             }
         }
         else{
-            if (res.length() > 0) {
+            if (str.length() > 0) {
                 //res.replaceAll(CommonData.NEW_LINE_REPLACEMENT, "\n");
-                char [] ch = str.toCharArray();
                 for (int i = 0; i<str.length(); i++)
-                    if (ch[i]==CommonData.NEW_LINE_REPLACEMENT)
-                        ch[i] = CommonData.NEW_LINE_SYMB;
-                res = new String(ch);
+                    if (str.charAt(i)==CommonData.NEW_LINE_REPLACEMENT)
+                        out.append(CommonData.NEW_LINE_SYMB);
+                    else
+                        out.append(str.charAt(i));
             }
         }
-        return res;
+        //System.out.println(". After fix: "+out.toString());
+        return out.toString();
     }
+
+    public String fixNoteData(final String str){
+        StringBuilder out = new StringBuilder();
+        if (str.length() > 0) {
+
+            for (int i = 0; i<str.length(); i++)
+                if (str.charAt(i)==CommonData.SEP)
+                    out.append(CommonData.SEPARATOR_REPLACEMENT);
+                else
+                    out.append(str.charAt(i));
+
+        }
+        return out.toString();
+    }
+
     /**
      * Procedure used to build serialized string from some data-number
      * and ID of the sought-for operation, in order to simplify the client-server interaction;
@@ -139,7 +156,7 @@ public class RequestsParser {
         StringBuilder buff = new StringBuilder();
         for (int i = 0; i < str.length(); i++) {
             if (str.charAt(i) == CommonData.SEP) {
-                s.add(buff.toString());
+                s.add(fixString(buff.toString(),false));
                 buff.delete(0, buff.length());
             }
             else buff.append(str.charAt(i));

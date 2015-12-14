@@ -14,9 +14,7 @@ import javafx.stage.Stage;
 
 import java.io.*;
 import java.net.Socket;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Random;
 
 import static java.lang.Thread.sleep;
 
@@ -49,8 +47,8 @@ public class Client extends Application {
     private ObservableList<NoteModel> _notes = FXCollections.observableArrayList();
     private ObservableList<VersionInfoModel> _versions = FXCollections.observableArrayList();
     private UserModel _userData;
-    private VersionInfoModel _versData;
-    private NoteModel _noteData;
+    //private VersionInfoModel _versData;
+    //private NoteModel _noteData;
 
     private int _selectedNote;
     private int _selectedVersion;
@@ -85,12 +83,13 @@ public class Client extends Application {
 
         _tagList = new ArrayList<Tag>();
         _userData = new UserModel();
-        _noteData = new NoteModel();
-        _versData = new VersionInfoModel();
+        //_noteData = new NoteModel();
+        //_versData = new VersionInfoModel();
 
         while (_stage != 2) {
             ShowLoginWindow();
-            ShowMainWindow();
+            if (_stage != 2)
+                ShowMainWindow();
         }
     }
 
@@ -109,6 +108,8 @@ public class Client extends Application {
         lc.SetUserData(this, _userData, _mainStage);
         while (suc != CommonData.SERV_YES) {
             _mainStage.showAndWait();
+            if (_stage == 2) //if user closed login window
+                break;
             if (_userData.getToCreate().get())
                 suc = CreateUser(_userData.getLogin().get(), _userData.getPass().get());
             else
@@ -117,15 +118,15 @@ public class Client extends Application {
         }
     }
 
-    public void ClearVersions(){
+    public void ClearVersions() {
         this._versions.clear();
     }
 
-    public int GetVersionsSize(){
+    public int GetVersionsSize() {
         return _versions.size();
     }
 
-    public int GetNotesSize(){
+    public int GetNotesSize() {
         return _notes.size();
     }
 
@@ -135,7 +136,7 @@ public class Client extends Application {
         loader2.setLocation(Client.class.getResource("MainWindow.fxml"));
         _mNode = loader2.load();
         MainController lc2 = loader2.getController();
-        lc2.SyncData(this, _mainStage, _noteData, _versData);
+        lc2.SyncData(this, _mainStage);
         _mainStage.setTitle(CommonData.MAIN_W_CAPTION);
         _mainScene = new Scene(_mNode, CommonData.MAIN_W_W, CommonData.MAIN_W_H);
         _mainStage.setScene(_mainScene);
@@ -145,7 +146,10 @@ public class Client extends Application {
 
     public void SetStatusExit() {
         _stage = 2;
+        Logout();
         SendToServer(CommonData.TERMCOMMAND);
+        _versions.clear();
+        _notes.clear();
     }
 
     public void SomeNoteSelected() {
@@ -176,8 +180,8 @@ public class Client extends Application {
                     }
                 }
         }
-        if (_versions.size() > 0)
-            this._versData = this._versions.get(0);
+        //if (_versions.size() > 0)
+        //    this._versData = this._versions.get(0);
     }
 
     private void SyncTags() {
@@ -209,6 +213,7 @@ public class Client extends Application {
                     return _tagList.get(i).GetStrData();
                 }
             }
+
         return new String();
     }
 
@@ -258,7 +263,7 @@ public class Client extends Application {
     }
 
     public void setSelectedNote(final int sn) {
-        System.out.println("Line "+sn+" selected!");
+        //System.out.println("Line "+sn+" selected!");
         _selectedNote = sn;
     }
 
@@ -369,13 +374,15 @@ public class Client extends Application {
         }
     }
 
-    public void CreateVersion() {
+    public void CreateVersion(final String newText, final String newDate, final String tags, final String newCaption) {
         ArrayList<String> buf = new ArrayList<String>();
         int verId = CommonData.SERV_NO;
 
-        buf.add(this._selectedNote+"");
-        buf.add(_versData.getText().get());
-        buf.add(_noteData.getMDate().get());
+        String text = _parser.fixNoteData(newText);
+
+        buf.add(this._notes.get(this._selectedNote).getId().get() + "");
+        buf.add(text);
+        buf.add(newDate);
 
         String st = _parser.Build(buf, CommonData.O_ADD_VERSION);
 
@@ -387,30 +394,32 @@ public class Client extends Application {
                 if (buff.get(0) == CommonData.O_RESPOND) {
                     if (buff.get(1) == CommonData.SERV_YES) {
                         verId = buff.get(2);
-                        this._versData.setId(verId);
-                        this._versions.add(new VersionInfoModel(_versData));
-                        System.out.println("New note id = "+verId);
+                        VersionInfoModel temp = new VersionInfoModel(newDate, text, verId);
+                        this._versions.add(temp);
+                        //System.out.println("New note id = "+verId);
                     }
                 }
         }
     }
 
-    public void CreateNote() {
+    public void CreateNote(final String newCaption, final String newText, final String newTags, final String newDate) {
         ArrayList<String> res = new ArrayList<String>();
         int newNoteId = -1;
         String st;
+        String text = _parser.fixNoteData(newText);
+
         //Parse new tags
-        ArrayList<String> tagData = UpdateTagList(this._noteData.getTags().get());
+        ArrayList<String> tagData = UpdateTagList(newTags);
 
         //Sync tags with server
         SyncTags();
 
         //Fill request
         res.clear();
-        res.add(this._versData.getText().get());
-        res.add(this._noteData.getTitle().get());
-        res.add(this._noteData.getCDate().get());
-        res.add(this._noteData.getMDate().get());
+        res.add(text);
+        res.add(newCaption);
+        res.add(newDate);
+        res.add(newDate);
 
         st = this._parser.Build(res, CommonData.O_CREATE_N);
         SendToServer(st);
@@ -421,7 +430,7 @@ public class Client extends Application {
                 if (buff.get(0) == CommonData.O_RESPOND) {
                     if (buff.get(1) == CommonData.SERV_YES) {
                         newNoteId = buff.get(2);
-                        System.out.println("New note id = "+newNoteId);
+                        //System.out.println("New note id = "+newNoteId);
                     }
                 }
         }
@@ -448,17 +457,18 @@ public class Client extends Application {
                     }
                 }
         }
-        _noteData.setId(newNoteId);
-        _notes.add(new NoteModel(_noteData));
-        _versData.setId(0);
-        _versions.add(new VersionInfoModel(_versData));
+        NoteModel nm = new NoteModel(newNoteId, newCaption, newTags, newDate, newDate);
+        //_noteData.setId(newNoteId);
+        _notes.add(nm);
+        VersionInfoModel vim = new VersionInfoModel(newDate, text, 0);
+        _versions.add(vim);
     }
 
     private ArrayList<String> UpdateTagList(final String tags) {
         int nextId = 0;
         ArrayList<String> res = new ArrayList<>();
         if (_tagList.size() > 0)
-            nextId = _tagList.get(_tagList.size() - 1).GetId()+1;
+            nextId = _tagList.get(_tagList.size() - 1).GetId() + 1;
 
         StringBuilder str = new StringBuilder();
         if (tags.length() > 0) {
@@ -507,19 +517,44 @@ public class Client extends Application {
         return res;
     }
 
-    public void DeleteNote(int note) {
-        String st = _parser.Build(note, CommonData.O_DELETE_N);
-        SendToServer(st);
-        String str = WaitForServer();
-        if (!str.equals("")) {
-            ArrayList<Integer> buff = _parser.ParseListOfInteger(str);
-            if (buff.size() > 1)
-                if (buff.get(0) == CommonData.O_RESPOND) {
-                    if (buff.get(1) == CommonData.SERV_YES) {
-                        _isAuth = true;
+    public void DeleteVersion() {
+        if (_versions.size() > 0) {
+            ArrayList<Integer> buff = new ArrayList<Integer>();
+            int noteId = _notes.get(this._selectedNote).getId().get();
+            int versId = _versions.get(this._selectedVersion).getId().get();
+            String st = _parser.Build(CommonData.O_DELETE_N_V, buff);
+            SendToServer(st);
+            String str = WaitForServer();
+            if (!str.equals("")) {
+                buff = _parser.ParseListOfInteger(str);
+                if (buff.size() > 1)
+                    if (buff.get(0) == CommonData.O_RESPOND) {
+                        if (buff.get(1) == CommonData.SERV_YES) {
+                            _versions.remove(this._selectedVersion);
+                        }
                     }
-                }
+            }
         }
+    }
+
+    public void DeleteNote() {
+        if (_notes.size() > 0) {
+            int noteId = _notes.get(this._selectedNote).getId().get();
+            String st = _parser.Build(noteId, CommonData.O_DELETE_N);
+            SendToServer(st);
+            String str = WaitForServer();
+            if (!str.equals("")) {
+                ArrayList<Integer> buff = _parser.ParseListOfInteger(str);
+                if (buff.size() > 1)
+                    if (buff.get(0) == CommonData.O_RESPOND) {
+                        if (buff.get(1) == CommonData.SERV_YES) {
+                            _notes.remove(this._selectedNote);
+                            _versions.clear();
+                        }
+                    }
+            }
+        }
+
     }
 
     public void GetTags() {

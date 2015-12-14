@@ -66,7 +66,8 @@
                         </AnchorPane>
                     </items>
                   </SplitPane>
-                  <Button fx:id="Logout" layoutX="27.0" layoutY="337.0" mnemonicParsing="false" onMouseClicked="#Logout" text="Logout" />
+                  <Button fx:id="Logout" layoutX="14.0" layoutY="337.0" mnemonicParsing="false" onMouseClicked="#Logout" text="Logout" />
+                  <Button layoutX="308.0" layoutY="337.0" mnemonicParsing="false" text="Delete" onMouseClicked="#DeleteButtonClicked"/>
                     </children>
                 </AnchorPane>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="373.0" prefWidth="427.0">
@@ -85,6 +86,6 @@
                 </AnchorPane>
             </items>
         </SplitPane>
-      <Label layoutX="188.0" layoutY="6.0" prefHeight="17.0" prefWidth="587.0" text="" fx:id="infoLabel" />
+      <Label fx:id="infoLabel" layoutX="188.0" layoutY="6.0" prefHeight="17.0" prefWidth="587.0" text="" />
     </children>
 </Pane>

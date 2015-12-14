@@ -49,20 +49,20 @@ public class MainController {
     @FXML
     private Button closeButton;
 
-    private NoteModel _noteData;
-    private VersionInfoModel _versData;
     private Client _client;
     private Stage _stage;
     private String _undoBuff;
 
     private int _mode; // 0 - view only notes, 1 - view notes and versions and text
     private boolean _isNewNote;
+    private boolean _isNoteDel;
 
     @FXML
     private void initialize() {
         // Initialize the person table with the two columns.
 
         _isNewNote = true;
+        _isNoteDel = false;
 
         _mode = 0;
 
@@ -94,24 +94,15 @@ public class MainController {
         String ss = LocalDateTime.now().toString();
         if (_isNewNote) {
             _isNewNote = false;
-            _noteData.setTitle(noteCaption.getText());
-            _noteData.setTags(tagList.getText());
-            _noteData.setCDate(ss);
-            _noteData.setmDate(ss);
-
-            _versData.setText(noteData.getText());
-            _versData.setTitle(ss);
-
-            _client.CreateNote();
-
+            _client.CreateNote(noteCaption.getText(), noteData.getText(), tagList.getText(), ss);
+            noteView.getSelectionModel().select(_client.getNotes().size()-1);
+            _isNoteDel=true;
             Refresh();
         }
         else {
-            _versData.setText(noteData.getText());
-            _versData.setTitle(ss);
-            _noteData.setmDate(ss);
-
-            _client.CreateVersion();
+            _client.CreateVersion(noteData.getText(), ss, tagList.getText(), noteCaption.getText());
+            versView.getSelectionModel().select(_client.getVersions().size()-1);
+            _isNoteDel=false;
             Refresh();
         }
     }
@@ -136,11 +127,9 @@ public class MainController {
         //_client.
     }
 
-    public void SyncData(Client mainApp, Stage mainStage, NoteModel notes, VersionInfoModel vers){
+    public void SyncData(Client mainApp, Stage mainStage){
         _client = mainApp;
         _stage = mainStage;
-        _noteData = notes;
-        _versData = vers;
         noteView.setItems(mainApp.getNotes());
         versView.setItems(mainApp.getVersions());
         _stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
@@ -161,7 +150,7 @@ public class MainController {
     }
 
     private void  VersViewSelected(VersionInfoModel data){
-        //_isNewNote = false;
+        _isNoteDel = false;
         if (data!= null) {
             if (_mode==1) {
                 _isNewNote = false;
@@ -178,6 +167,7 @@ public class MainController {
     }
 
     private void  NoteViewSelected(NoteModel note){
+        _isNoteDel = true;
         if (note!= null) {
             if (_client.GetNotesSize()>0) {
                 _client.setSelectedNote(noteView.getSelectionModel().getSelectedIndex());
@@ -218,5 +208,33 @@ public class MainController {
         this.noteColumn.setVisible(false);
         this.versColumn.setVisible(true);
         this.noteColumn.setVisible(true);
+    }
+
+    public void DeleteButtonClicked(Event event) {
+        if (!_isNoteDel) {
+            _client.DeleteVersion();
+            this.noteData.setText("");
+            this._undoBuff = "";
+            if (_client.getVersions().size()>1) {
+                _client.DeleteVersion();
+                versView.getSelectionModel().select(_client.getVersions().size() - 1);
+            }
+            else {
+                _client.DeleteNote();
+                this.noteCaption.setText("");
+                this.tagList.setText("");
+                if (_client.getNotes().size()>0)
+                    noteView.getSelectionModel().select(_client.getNotes().size()-1);
+            }
+        }
+        else {
+            _client.DeleteNote();
+            this.noteData.setText("");
+            this._undoBuff = "";
+            this.noteCaption.setText("");
+            this.tagList.setText("");
+            if (_client.getNotes().size()>0)
+                noteView.getSelectionModel().select(_client.getNotes().size()-1);
+        }
     }
 }
