@@ -29,6 +29,7 @@ public class LoginController {
 
     @FXML
     private void initialize() {
+        NotifyUser("Welcome to the NoteZ application service.");
         serverName.setText(CommonData.HOST+":"+CommonData.PORT);
     }
 
@@ -66,6 +67,12 @@ public class LoginController {
     }
 
     public void DeleteUserButtonClicked(Event event) {
-
+        userName.clear();
+        password.clear();
+        int res = _client.DeleteUser();
+        if (res == CommonData.SERV_YES)
+            NotifyUser("User account has been successfully deleted.");
+        else
+            NotifyUser("User account hasn't been successfully deleted. Please, try again.");
     }
 }

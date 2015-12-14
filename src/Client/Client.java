@@ -341,8 +341,9 @@ public class Client extends Application {
         return suc;
     }
 
-    public void DeleteUser(int user_id) {
-        String st = _parser.Build(user_id, CommonData.O_DELETE_U);
+    public int DeleteUser() {
+        int res = CommonData.SERV_NO;
+        String st = _parser.Build("", CommonData.O_DELETE_U);
         SendToServer(st);
         String str = WaitForServer();
         if (!str.equals("")) {
@@ -350,14 +351,11 @@ public class Client extends Application {
             if (buff.size() > 1)
                 if (buff.get(0) == CommonData.O_RESPOND) {
                     if (buff.get(1) == CommonData.SERV_YES) {
-                        _isAuth = false;
-                        _mainStage.setTitle(CommonData.LOG_W_CAPTION);
-                        _mainScene = new Scene(_mNode, 600, 400);
-                        _mainStage.setScene(_mainScene);
-                        _mainStage.show();
+                        res = CommonData.SERV_YES;
                     }
                 }
         }
+        return res;
     }
 
     public void CreateVersion(final String newText, final String newDate, final String tags, final String newCaption) {

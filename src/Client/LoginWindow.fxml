@@ -16,7 +16,7 @@
       <RowConstraints />
    </rowConstraints>
    <children>
-      <Pane prefHeight="282.0" prefWidth="250.0">
+      <Pane prefHeight="355.0" prefWidth="250.0">
          <children>
             <Button layoutX="101.0" layoutY="176.0" mnemonicParsing="false" onMouseClicked="#LoginButtonClicked" text="Login" />
             <Button layoutX="86.0" layoutY="211.0" mnemonicParsing="false" onMouseClicked="#CreateUserButtonClicked" text="Create user" />
@@ -26,8 +26,8 @@
             <Label layoutX="88.0" layoutY="14.0" text="ServerId (opt.))" />
             <Label layoutX="109.0" layoutY="62.0" text="Login" />
             <Label layoutX="99.0" layoutY="117.0" text="Password" />
-            <Label fx:id="infoLabel" layoutX="21.0" layoutY="251.0" prefHeight="17.0" prefWidth="206.0" text="" />
-            <Button layoutX="86.0" layoutY="247.0" mnemonicParsing="false" text="Delete User" onMouseClicked="#DeleteUserButtonClicked"/>
+            <Label fx:id="infoLabel" layoutX="22.0" layoutY="280.0" prefHeight="61.0" prefWidth="206.0" text="" />
+            <Button layoutX="86.0" layoutY="247.0" mnemonicParsing="false" onMouseClicked="#DeleteUserButtonClicked" text="Delete User" />
          </children>
       </Pane>
    </children>

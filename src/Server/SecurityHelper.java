@@ -174,7 +174,6 @@ public class SecurityHelper {
             _dataBase.DeleteUser(userId);
             return true;
         }
-
         return false;
     }
 
