@@ -489,7 +489,7 @@ public class Client extends Application {
         ArrayList<Integer> res = new ArrayList<Integer>();
         if (_tagList.size() > 0 && tagData.size() > 0) {
             for (int i = 0; i < tagData.size(); i++) {
-                for (int j = 0; i < _tagList.size(); j++) {
+                for (int j = 0; j < _tagList.size(); j++) {
                     if (_tagList.get(j).GetStrData().equals(tagData.get(i))) {
                         int t = _tagList.get(j).GetId();
                         if (!res.contains(t)) {

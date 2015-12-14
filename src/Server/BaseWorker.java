@@ -198,6 +198,7 @@ public class BaseWorker {
                                 lBuf.delete(0, lBuf.length());
                             } else {
                                 lBuf.append(buff.charAt(j));
+                                buffTagsId.clear();
                             }
                         }
                         break;

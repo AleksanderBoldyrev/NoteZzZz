@@ -168,7 +168,7 @@ public class MainController {
         if (note!= null) {
             if (_client.GetNotesSize()>0) {
                 _client.setSelectedNote(noteView.getSelectionModel().getSelectedIndex());
-                _client.setSelectedVersion(versView.getSelectionModel().getSelectedIndex());
+                //versView.getSelectionModel().select(-1);
                 this.tagList.setText(note.getTags().get());
                 this.noteCaption.setText(note.getTitle().get());
                 _client.SomeNoteSelected();
