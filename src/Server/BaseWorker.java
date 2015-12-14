@@ -192,7 +192,6 @@ public class BaseWorker {
                         break;
                     case 3:         //*** Read note's tags id list. ***
                         stage++;
-                        //lBuf.replace(0, lBuf.length() - 1, "");
                         for (int j = 0; j < buff.length(); j++) {
                             if (buff.charAt(j) == CommonData.SEPID) {
                                 buffTagsId.add(Integer.parseInt(lBuf.toString()));
@@ -513,23 +512,6 @@ public class BaseWorker {
             Tag t1 = new Tag(m, t);
             _tags.add(t1);
         }
-        //File file = new File(fileName);
-        /*try
-        {
-            if(!file.exists())
-                file.createNewFile();
-            PrintWriter out = new PrintWriter(file.getAbsoluteFile());
-
-            for (int i = 0; i < _tags.size(); i++) {
-                out.print(_tags.get(i).GetId());
-                out.print(sep);
-                out.print(_tags.get(i).GetStrData());
-                out.print(sep);
-            }
-            out.close();
-        } catch(IOException e) {
-            throw new RuntimeException(e);
-        }*/
     }
 
     public void SyncTags(final ArrayList<Tag> newTags) {
@@ -607,38 +589,6 @@ public class BaseWorker {
         Note n1 = new Note(m, title, data, LocalDateTime.parse(cDate), LocalDateTime.parse(mDate));
         this._notes.add(n1);
         return m;
-        //}
-        //File file = new File(fileName);
-        /*try
-        {
-            if(!file.exists())
-                file.createNewFile();
-            PrintWriter out = new PrintWriter(file.getAbsoluteFile());
-
-            out.print(_notes.get(i).GetId());
-            out.print(sep);
-            int vcount = _notes.get(i).GetVersionsCount();
-            out.print(vcount);
-            out.print(sep);
-            int t = _notes.get(i).GetVersionsCount();
-            for (int j = 0; j < t; j++) {
-                out.print(_notes.get(i).GetTagById(j));
-                out.print(sepId);
-            }
-            out.print(sep);
-            for (int j = 0; j < vcount; j++)
-            {
-                NotePrimitive nt = _notes.get(i).GetNoteByPos(j);
-                out.print(nt.GetCDate().toString());
-                out.print(sep);
-                out.print(nt.GetData());
-                out.print(sep);
-            }
-            out.close();
-        } catch(IOException e) {
-            throw new RuntimeException(e);
-        }*/
-
     }
 
     /**
@@ -944,26 +894,6 @@ public class BaseWorker {
             }
         }
         return CommonData.SERV_NO;
-    }
-
-    public void DeleteUnusedTags() {
-        /**
-         * TODO
-         */
-    }
-
-    public void Verify() {
-        /**
-         * TODO
-         */
-    }
-
-    public void CreateBackup() {
-
-    }
-
-    public void GetFromBackup() {
-
     }
 
     public int AddVersionToNote(int noteId, String text, LocalDateTime time) {

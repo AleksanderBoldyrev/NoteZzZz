@@ -43,21 +43,14 @@ public class Client extends Application {
     private Parent _mNode;
     private Scene _mainScene;
 
-    //private Client.NoteModel _container;
     private ObservableList<NoteModel> _notes = FXCollections.observableArrayList();
     private ObservableList<VersionInfoModel> _versions = FXCollections.observableArrayList();
     private UserModel _userData;
-    //private VersionInfoModel _versData;
-    //private NoteModel _noteData;
 
     private int _selectedNote;
     private int _selectedVersion;
 
     public void startProcess() {
-        /*Thread t = new Thread(_listener);
-        t.setDaemon(true);
-        t.start();*/
-
         try {
             _sock = new Socket(CommonData.HOST, CommonData.PORT);
             _in = new BufferedReader(new InputStreamReader(_sock.getInputStream()));
@@ -66,8 +59,6 @@ public class Client extends Application {
             e.printStackTrace();
         }
         termFlag = false;
-
-        //CreateUser();
     }
 
     public static void main(String[] args) {
@@ -83,8 +74,6 @@ public class Client extends Application {
 
         _tagList = new ArrayList<Tag>();
         _userData = new UserModel();
-        //_noteData = new NoteModel();
-        //_versData = new VersionInfoModel();
 
         while (_stage != 2) {
             ShowLoginWindow();
@@ -94,7 +83,7 @@ public class Client extends Application {
     }
 
     private void ShowLoginWindow() throws Exception {
-           /* Show login window */
+        /* Show login window */
         int suc = CommonData.SERV_NO;
 
         FXMLLoader loader = new FXMLLoader();
@@ -180,8 +169,6 @@ public class Client extends Application {
                     }
                 }
         }
-        //if (_versions.size() > 0)
-        //    this._versData = this._versions.get(0);
     }
 
     private void SyncTags() {
@@ -263,7 +250,6 @@ public class Client extends Application {
     }
 
     public void setSelectedNote(final int sn) {
-        //System.out.println("Line "+sn+" selected!");
         _selectedNote = sn;
     }
 
@@ -305,8 +291,6 @@ public class Client extends Application {
                         LoadBasicDataFromServer();
                         suc = CommonData.SERV_YES;
                     }
-                    //else
-                    //   _uiLogin.label.showMessage("User name or password is incorrect!");
                 }
         }
         return suc;
@@ -322,6 +306,8 @@ public class Client extends Application {
                 if (buff.get(0) == CommonData.O_RESPOND) {
                     if (buff.get(1) == CommonData.SERV_YES) {
                         _isAuth = false;
+                        _notes.clear();
+                        _versions.clear();
                         return CommonData.SERV_YES;
                     }
                 }

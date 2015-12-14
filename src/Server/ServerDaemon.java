@@ -50,7 +50,6 @@ public class ServerDaemon extends Thread{
                 t.setDaemon(true);
                 t.start();
             } catch (IOException e) {
-                //e.printStackTrace();
                 System.out.println("Couldn't create a new server thread.");
                 break;
             }

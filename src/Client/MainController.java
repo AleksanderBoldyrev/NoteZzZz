@@ -88,6 +88,7 @@ public class MainController {
 
     @FXML
     private void SaveButtonClicked(Event event) {
+        NotifyUser("");
         _mode = 1;
         //_isNewNote = true;
         _undoBuff = noteData.getText();
@@ -109,11 +110,13 @@ public class MainController {
 
     @FXML
     private void UndoButtonClicked(Event event) {
+        NotifyUser("");
         noteData.setText(_undoBuff);
     }
 
     @FXML
     public void NewNoteButtonClicked(Event event) {
+        NotifyUser("");
         _isNewNote = true;
         _mode = 0;
 
@@ -122,9 +125,6 @@ public class MainController {
         this._undoBuff = "";
         this.noteCaption.setText("");
         this.tagList.setText("");
-        //_client.CreateNote(noteData.getText(), noteCaption.getText(), new ArrayList<Integer>());
-        //_noteData.
-        //_client.
     }
 
     public void SyncData(Client mainApp, Stage mainStage){
@@ -144,9 +144,6 @@ public class MainController {
 
         versView.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> VersViewSelected(newValue));
-
-        //noteView.refresh();
-        //versView.refresh();
     }
 
     private void  VersViewSelected(VersionInfoModel data){
@@ -171,11 +168,10 @@ public class MainController {
         if (note!= null) {
             if (_client.GetNotesSize()>0) {
                 _client.setSelectedNote(noteView.getSelectionModel().getSelectedIndex());
+                _client.setSelectedVersion(versView.getSelectionModel().getSelectedIndex());
                 this.tagList.setText(note.getTags().get());
                 this.noteCaption.setText(note.getTitle().get());
                 _client.SomeNoteSelected();
-                //versView.
-                //noteView.refresh();
                 _mode = 1;
             }
         }
@@ -191,6 +187,7 @@ public class MainController {
     }
 
     public void Logout(Event event) {
+        NotifyUser("");
         if (_client.Logout()== CommonData.SERV_YES)
         {
             _stage.close();
@@ -211,6 +208,7 @@ public class MainController {
     }
 
     public void DeleteButtonClicked(Event event) {
+        NotifyUser("");
         if (!_isNoteDel) {
             _client.DeleteVersion();
             this.noteData.setText("");

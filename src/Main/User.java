@@ -39,7 +39,6 @@ public class User {
     public int GetId() {
         return this._u_id;
     }
-    //public void SetId(int id) { this._u_id = id; }
     public String GetName() { return this._login; }
     public String GetPass() { return this._pass; }
     public int GetNotesCount() { return this._notes_u.size(); }

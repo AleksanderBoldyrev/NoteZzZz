@@ -70,35 +70,11 @@ public class SecurityHelper {
         return 0;
     }
 
-    public synchronized  int GetNotesCount(int userId) {
-        if (_activeUsers.contains(userId)) return _dataBase.GetNotesCountByUser(userId);
-        _rCount++;
-        return 0;
-    }
-
     public synchronized  ArrayList<Integer> GetNotesListByUserId(int userId) {
         _rCount++;
         ArrayList<Integer> res = new ArrayList<Integer>();
         if (_activeUsers.contains(userId)) {
             return _dataBase.GetNotesByUserId(userId);
-        }
-        return res;
-    }
-
-    public synchronized String GetNoteVersionById(int userId, int noteId, int verId) {
-        _rCount++;
-        String res = "";
-        if (_activeUsers.contains(userId)) {
-            return _dataBase.GetNoteVerById(userId, noteId, verId);
-        }
-        return res;
-    }
-
-    public synchronized String GetNoteVersionDateById(int userId, int noteId, int verId) {
-        _rCount++;
-        String res = "";
-        if (_activeUsers.contains(userId)) {
-            return _dataBase.GetNoteVerDateById(userId, noteId, verId);
         }
         return res;
     }
@@ -109,15 +85,6 @@ public class SecurityHelper {
         if (_activeUsers.contains(userId))
             return _dataBase.GetNotesTitles(userId);
         return res;
-    }
-
-    public synchronized int GetNoteVersCount(int userId, int noteId) {//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        _rCount++;
-        int res = 0;
-        if (_activeUsers.contains(userId))
-            return _dataBase.GetNoteVersCount(userId,noteId);
-        return 0;
-
     }
 
     public synchronized ArrayList<String> GetMoreInfo(int userId, int noteId) {
@@ -152,7 +119,7 @@ public class SecurityHelper {
         return res;
     }
 
-    public synchronized int CreateNote(int userId, String data, String title, String cDate, String mDate) { //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    public synchronized int CreateNote(int userId, String data, String title, String cDate, String mDate) {
         _rCount++;
         if (_activeUsers.contains(userId)) {
             int res = _dataBase.AddNote(data, title, cDate, mDate);
@@ -173,7 +140,7 @@ public class SecurityHelper {
         return -1;
     }
 
-    public synchronized int DeleteNote(final int userId, final int noteId) { //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    public synchronized int DeleteNote(final int userId, final int noteId) {
         if (_activeUsers.contains(userId))
             if (HaveUserNote(userId, noteId)) {
                 int res = _dataBase.DeleteNote(noteId);
@@ -185,7 +152,7 @@ public class SecurityHelper {
         return CommonData.SERV_NO;
     }
 
-    public synchronized int DeleteVersion(final int userId, final int noteId, final int versId) { //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    public synchronized int DeleteVersion(final int userId, final int noteId, final int versId) {
         if (_activeUsers.contains(userId))
             if (HaveUserNote(userId, noteId)) {
                 return _dataBase.DeleteVersion(noteId, versId);
@@ -193,11 +160,7 @@ public class SecurityHelper {
         return CommonData.SERV_NO;
     }
 
-    public synchronized void GetUserNoteHeaderList() {
-        _rCount++;
-    }
-
-    public synchronized boolean CreateUser(String name, String pass) { //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    public synchronized boolean CreateUser(String name, String pass) {
         _rCount++;
         boolean res = _dataBase.DoesUserExist(name);  //*** NARROW!. ***
         if (!res)
@@ -205,7 +168,7 @@ public class SecurityHelper {
         return !res;
     }
 
-    public synchronized boolean DeleteUser(int userId) {//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    public synchronized boolean DeleteUser(int userId) {
         _rCount++;
         if (_activeUsers.contains(userId)) {
             _dataBase.DeleteUser(userId);
@@ -215,7 +178,7 @@ public class SecurityHelper {
         return false;
     }
 
-    public synchronized boolean SaveNote(int userId) {//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    public synchronized boolean SaveNote(int userId) {
         _rCount++;
         if (_activeUsers.contains(userId)) {
             _dataBase.SaveData();
@@ -248,18 +211,6 @@ public class SecurityHelper {
         return res;
     }
 
-    public synchronized void ChangeUser() {
-        _rCount++;
-    }
-
-    public void DeleteTagFromNote() {
-        _rCount++;
-    }
-
-    /*public void GetNoteListByTag() {
-
-    }*/
-
     public ArrayList<Tag> GetTagList(final int userId) {
         _rCount++;
         ArrayList<Tag> art = new ArrayList<Tag>();
@@ -276,10 +227,6 @@ public class SecurityHelper {
         return true;
     }
 
-    public void GetTitleNoteList() {
-        _rCount++;
-    }
-
     public boolean HaveUserNote(final int userId, final int noteId) {
         _rCount++;
         ArrayList<Integer> buff = _dataBase.GetNotesByUserId(userId);
@@ -294,6 +241,54 @@ public class SecurityHelper {
         _rCount++;
         if (_activeUsers.contains(userId)){
             return _dataBase.AddVersionToNote(noteId, text, time);
+        }
+        return res;
+    }
+
+    public synchronized  int GetNotesCount(int userId) {
+        if (_activeUsers.contains(userId)) return _dataBase.GetNotesCountByUser(userId);
+        _rCount++;
+        return 0;
+    }
+
+    public void GetTitleNoteList() {
+        _rCount++;
+    }
+
+    public void DeleteTagFromNote() {
+        _rCount++;
+    }
+
+    /*public void GetNoteListByTag() {
+
+    }*/
+
+    public synchronized void GetUserNoteHeaderList() {
+        _rCount++;
+    }
+
+    public synchronized int GetNoteVersCount(int userId, int noteId) {
+        _rCount++;
+        int res = 0;
+        if (_activeUsers.contains(userId))
+            return _dataBase.GetNoteVersCount(userId,noteId);
+        return 0;
+    }
+
+    public synchronized String GetNoteVersionById(int userId, int noteId, int verId) {
+        _rCount++;
+        String res = "";
+        if (_activeUsers.contains(userId)) {
+            return _dataBase.GetNoteVerById(userId, noteId, verId);
+        }
+        return res;
+    }
+
+    public synchronized String GetNoteVersionDateById(int userId, int noteId, int verId) {
+        _rCount++;
+        String res = "";
+        if (_activeUsers.contains(userId)) {
+            return _dataBase.GetNoteVerDateById(userId, noteId, verId);
         }
         return res;
     }

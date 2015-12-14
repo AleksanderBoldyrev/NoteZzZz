@@ -85,7 +85,6 @@ public class RequestsParser {
     }
 
     private String fixString(final String str, final boolean dir){
-        //System.out.print("In fix: "+str+" "+dir);
         StringBuilder out = new StringBuilder();
         if (dir) {
             if (str.length() > 0) {
@@ -99,7 +98,6 @@ public class RequestsParser {
         }
         else{
             if (str.length() > 0) {
-                //res.replaceAll(CommonData.NEW_LINE_REPLACEMENT, "\n");
                 for (int i = 0; i<str.length(); i++)
                     if (str.charAt(i)==CommonData.NEW_LINE_REPLACEMENT)
                         out.append(CommonData.NEW_LINE_SYMB);
@@ -107,7 +105,6 @@ public class RequestsParser {
                         out.append(str.charAt(i));
             }
         }
-        //System.out.println(". After fix: "+out.toString());
         return out.toString();
     }
 
@@ -187,41 +184,6 @@ public class RequestsParser {
 
         return n;
     }
-
-    /**
-     * Procedure used to parse serialized string into the output note version;
-     * @param str - common data;
-     * @return - output note primitive version.
-     */
-
-    /*public NotePrimitive ParseNotePrimitive(String str, int id) {
-        //NotePrimitive np = new NotePrimitive();
-
-        byte stage = 0;
-        StringBuilder buff = new StringBuilder();
-
-        LocalDateTime dtbuff = LocalDateTime.now();
-        String ss = "";
-
-        for (int i = 0; i < str.length(); i++) {
-            if (str.charAt(i) == CommonData.SEP) {
-                switch (stage) {
-                    case 0:         //*** Read creation date. ***
-                        stage++;
-                        dtbuff = LocalDateTime.parse(buff.toString());
-                        break;
-                    case 1:         //*** Read text. ***
-                        stage++;
-                        ss = buff.toString();
-                        break;
-                }
-                buff.delete(0, buff.length());
-            } else buff.append(str.charAt(i));
-        }
-
-        NotePrimitive np = new NotePrimitive(id, dtbuff, ss);
-        return np;
-    }*/
 
     public ArrayList<Tag> ParseListOfTags(ArrayList<String> str) {
         ArrayList<Tag> t = new ArrayList<Tag>();

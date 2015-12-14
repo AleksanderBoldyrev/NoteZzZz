@@ -16,25 +16,15 @@ import java.util.ArrayList;
  */
 
 public class Server extends Thread {
-    //private int _port;
     private Socket _socket;
     private BufferedReader _in;
     private PrintWriter _out;
     private RequestsParser _parser;
     private int _userId;
 
-    /*private void createNewUser() {
-
-    }
-
-    private void createNewNote() {
-
-    }*/
-
     Server(Socket s) {
         _socket = s;
         _parser = new RequestsParser();
-        //_parser.SetUserId(-1);
         _userId = -1;
         try {
             _in = new BufferedReader(new InputStreamReader(_socket.getInputStream()));
@@ -377,7 +367,6 @@ public class Server extends Thread {
 
     public String DeleteNote(ArrayList<String> buff) {
         int suc = CommonData.SERV_NO;
-        //ArrayList<Integer> ar = new ArrayList<Integer>();
         if (buff.size() > 1) {
             int noteId = Integer.parseInt(buff.get(1));
             suc = ServerDaemon.sHelper.DeleteNote(_userId, noteId);
@@ -388,7 +377,6 @@ public class Server extends Thread {
 
     public String DeleteNoteByVer(ArrayList<String> buff) {
         int suc = CommonData.SERV_NO;
-        //ArrayList<Integer> ar = new ArrayList<Integer>();
         if (buff.size() > 2) {
             int noteId = Integer.parseInt(buff.get(1));
             int versId = Integer.parseInt(buff.get(2));
@@ -400,7 +388,6 @@ public class Server extends Thread {
     public String SaveNote(ArrayList<String> buff) {
         StringBuilder res = new StringBuilder();
         boolean suc = false;
-        //ArrayList<Integer> ar = new ArrayList<Integer>();
         if (buff.size() > 3) {
             suc = ServerDaemon.sHelper.SaveNote(Integer.parseInt(buff.get(1)));
         }
@@ -415,20 +402,6 @@ public class Server extends Thread {
         String res = new String();
         return res;
     }
-    /*public String CreateRequest(ArrayList<String> buff ) {
-        String res = new String();
-        return res;
-    }
-
-    public String ChangeRequest(ArrayList<String> buff ) {
-        String res = new String();
-        return res;
-    }
-
-    public String DeleteRequest(ArrayList<String> buff ) {
-        String res = new String();
-        return res;
-    }*/
 
     public String CreateTag(ArrayList<String> buff) {
         String res = new String();
@@ -436,31 +409,6 @@ public class Server extends Thread {
     }
 
     public String DeleteTag(ArrayList<String> buff) {
-        String res = new String();
-        return res;
-    }
-
-    public String AddTagToRequest(ArrayList<String> buff) {
-        String res = new String();
-        return res;
-    }
-
-    public String GetRequestListByTags(ArrayList<String> buff) {
-        String res = new String();
-        return res;
-    }
-
-    public String GetTagList(ArrayList<String> buff) {
-        String res = new String();
-        return res;
-    }
-
-    public String HandleRequest(ArrayList<String> buff) {
-        String res = new String();
-        return res;
-    }
-
-    public String GetNoteTitleList(ArrayList<String> buff) {
         String res = new String();
         return res;
     }

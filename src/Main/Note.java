@@ -1,7 +1,5 @@
 package Main;
 
-import Client.LoginController;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
@@ -20,18 +18,6 @@ public class Note {
     private LocalDateTime _n_mdate;
     private ArrayList<Integer> _tags;
 
-    /*Note (String data, int id) {
-        _note = new ArrayList<NotePrimitive>();
-        _note.clear();
-        NotePrimitive n = new NotePrimitive(data, id*10000);
-        _note.add(n);
-        _id = id;
-        _n_cdate = LocalDateTime.now();
-        _n_mdate = LocalDateTime.now();
-
-    }*/
-
-
     public Note (final int id, final String title, final String data, final LocalDateTime cDate, final LocalDateTime mDate){
         this._id = id;
         this._title = title;
@@ -47,20 +33,15 @@ public class Note {
         this._note_n.clear();
         this._id = id;
         this._title = title;
-        //System.out.print(id + "|");
         this._tags = new ArrayList<Integer>();
         this._tags.clear();
         for (int i = 0; i < tags.size(); i++) {
             this._tags.add(i, tags.get(i));
-            //System.out.print(_tags.get(i) + ".");
         }
-        //System.out.print(" | ");
         this._note_n = new ArrayList<NotePrimitive>();
         for (int i = 0; i < notes.size(); i++) {
             this._note_n.add(i, notes.get(i));
-            //System.out.print((_note.get(i)).GetID() + "|" + (_note.get(i)).GetData() + "|");
         }
-        //System.out.println( "|");
         if (this._note_n.size() > 0) {
             this._n_cdate = (this._note_n.get(0)).GetCDate();
             this._n_mdate = (this._note_n.get(this._note_n.size() - 1)).GetCDate();
@@ -69,7 +50,6 @@ public class Note {
             this._n_cdate = LocalDateTime.now();
             this._n_mdate = LocalDateTime.now();
         }
-        //System.out.println(_n_cdate + "|" + _n_mdate + "|");
     }
 
     public NotePrimitive getNote() {
@@ -82,43 +62,6 @@ public class Note {
             return this._note_n.get(pos).GetCDate().toString();
         return "";
     }
-
-    /*NotePrimitive getNoteByPos(int id) {
-        if (_id > _note.size()) _id = 0;
-        return _note.get(id - _id*10000);
-    }*/
-
-    /*
-    NotePrimitive getNoteByCreateDate(LocalDateTime date) {
-        NotePrimitive res = new NotePrimitive("");
-        if (_id > _note.size()) _id = 0;
-        if (_note.size() > 0 && (date == (this._n_cdate) )) ////////////!!!!!!!!!!!!!!!!!!!!!!!!
-        for (int i = 0; i < _note.size(); i++)
-        {
-            if ((_note.get(i)).GetCDate()==date)
-                res = _note.get(i);
-;       }
-        return res;
-    }
-
-    NotePrimitive getNoteByModifyDate(LocalDateTime date) {
-        NotePrimitive res = new NotePrimitive("");
-        if (_id > _note.size()) _id = 0;
-        if (_note.size() > 0 && (date == this._n_mdate) )
-            for (int i = 0; i < _note.size(); i++)
-            {
-                if ((_note.get(i)).GetMDate()==date)
-                    res = _note.get(i);
-            }
-        return res;
-    }
-    */
-
-    /*long GetLastVersion()
-    {
-        if (_id > _note.size()) _id = 0;
-        return _note.get(_note.size()-1).GetID();
-    }*/
 
     public int GetVersionsCount() {
         return this._note_n.size();
@@ -195,16 +138,4 @@ public class Note {
         this._note_n.add(np);
         return id;
     }
-
-    /*void DelNote(int ident) {
-        if (_id > _note_n.size()) _id = 0;
-        _note_n.remove(ident - _id*10000);
-        _n_mdate = LocalDateTime.now();
-    }
-
-    void ModifyNote(String data, int ident, int pos) {
-        if (_id > _note_n.size()) _id = 0;
-        _note_n.get(ident - _id*10000).ChangeNote(pos, data);
-        _n_mdate = LocalDateTime.now();
-    }*/
 }

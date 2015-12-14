@@ -9,33 +9,6 @@ import java.util.ArrayList;
  */
 
 public class Tag {
-    /*
-        private ArrayList <String> Tag;
-        private class TagType {
-            int id;
-            String data;
-        }
-
-        public void LoadTagsFromBase() {
-
-        }
-
-        public void SaveInBase() {
-
-        }
-
-        public void DeleteTag() {
-
-        }
-
-        public void AddTag() {
-
-        }
-
-        public void DeleteUnusedTags() {
-
-        }
-    */
     private int id;
     private String strData;
 

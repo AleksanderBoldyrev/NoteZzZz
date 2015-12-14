@@ -9,9 +9,9 @@ import jdk.nashorn.internal.runtime.Debug;
  */
 
 public final class CommonData {
-    public static final String PATH_USERS = "./Base/Users";      // *
-    public static final String PATH_NOTES = "./Base/Notes";      // These are the paths to the DB.
-    public static final String PATH_TAGS = "./Base/Tags";      // *
+    public static final String PATH_USERS = "./Base/Users";         // *
+    public static final String PATH_NOTES = "./Base/Notes";         // These are the paths to the DB.
+    public static final String PATH_TAGS = "./Base/Tags";           // *
     public static int PORT = 36550;                                 // Number of port we use.
     public static final String HOST = "localhost";                  // Host name.
     public static final char SEP = '|';                             // Service separator of the sent data.
@@ -23,9 +23,9 @@ public final class CommonData {
     public static final int STEP_TOFLUSHBASE = 3;                   // Number of saves between DB backup.
     public static final int SERV_YES = 1;                           // Positive server respond.
     public static final int SERV_NO = 0;                            // Negative server respond.
-    public static final char NEW_LINE_SYMB = '\n';
-    public static final char NEW_LINE_REPLACEMENT = '~';
-    public static final String SEPARATOR_REPLACEMENT = "\\/";
+    public static final char NEW_LINE_SYMB = '\n';                  // Symbol of the new line in escape-sequence notation.
+    public static final char NEW_LINE_REPLACEMENT = '~';            // Symbol used to replace the new line symbol.
+    public static final String SEPARATOR_REPLACEMENT = "\\/";       // Symbol used to replace the separating symbol for the sent data.
 
     public static final String LOG_W_CAPTION = "Welcome to NoteZ app";
     public static final String MAIN_W_CAPTION = "NoteZ app";
