@@ -123,6 +123,7 @@ public class BaseWorker {
                             }
                         }
                         this._users.add(new User(buffId, buffLogin, buffPass, buffNotesId));
+                        buffNotesId.clear();
                         break;
                 }
                 buff.delete(0, buff.length());
@@ -588,6 +589,7 @@ public class BaseWorker {
                 for (int i = 0; i < this._users.size(); i++)
                     if (this._users.get(i).GetId() == userId) {
                         this._users.get(i).AddNote(noteId);
+                        System.out.println("Note number " + noteId + " is added to the user " + userId);
                         return CommonData.SERV_YES;
                     }
 
@@ -596,10 +598,12 @@ public class BaseWorker {
     }
 
     public int AddNote(final String data, final String title, final String cDate, final String mDate) {
-        //if (VerifyUserId(userId)) {
-        int m = CommonData.SERV_NO;
+        //if (VerifyUserId(userId)) ;
+        int m;
         if (this._notes.size() > 0)
             m = this._notes.get(this._notes.size()-1).GetId()+1;
+        else
+            m=0;
         Note n1 = new Note(m, title, data, LocalDateTime.parse(cDate), LocalDateTime.parse(mDate));
         this._notes.add(n1);
         return m;
@@ -650,6 +654,7 @@ public class BaseWorker {
             m = _users.get(_users.size()-1).GetId() + 1;
         User u1 = new User(m, _log, _pass, new ArrayList<Integer>());
         _users.add(u1);
+        System.out.println("User number " + m + " is created.");
         return m;
     }
 

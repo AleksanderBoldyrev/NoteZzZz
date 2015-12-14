@@ -156,10 +156,11 @@ public class SecurityHelper {
         _rCount++;
         if (_activeUsers.contains(userId)) {
             int res = _dataBase.AddNote(data, title, cDate, mDate);
-            if (res>=0)
-                return _dataBase.AddNoteToUser(userId, res);
-            else
-                return -1;
+            if (res>=0) {
+                _dataBase.AddNoteToUser(userId, res);
+                return res;
+            }
+
         }
         return -1;
     }

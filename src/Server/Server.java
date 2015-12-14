@@ -306,6 +306,7 @@ public class Server extends Thread {
             String text = buff.get(2);
             LocalDateTime time = LocalDateTime.parse(buff.get(3));
             suc = ServerDaemon.sHelper.AddVersionToNote(_userId, noteId, text, time);
+            res.add(CommonData.SERV_YES+"");
         }
         res.add(suc + "");
         return _parser.Build(res, CommonData.O_RESPOND);

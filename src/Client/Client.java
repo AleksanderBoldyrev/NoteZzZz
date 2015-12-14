@@ -156,7 +156,9 @@ public class Client extends Application {
 
     // get all primitives <caption-text>
     private void GetVersions() {
+        _versions.clear();
         ArrayList<String> buf = new ArrayList<String>();
+        buf.add(_notes.get(_selectedNote).getId().get() + "");
         String st = _parser.Build(buf, CommonData.O_GET_VERSIONS);
         SendToServer(st);
         String str = WaitForServer();
@@ -256,6 +258,7 @@ public class Client extends Application {
     }
 
     public void setSelectedNote(final int sn) {
+        System.out.println("Line "+sn+" selected!");
         _selectedNote = sn;
     }
 
@@ -386,6 +389,7 @@ public class Client extends Application {
                         verId = buff.get(2);
                         this._versData.setId(verId);
                         this._versions.add(new VersionInfoModel(_versData));
+                        System.out.println("New note id = "+verId);
                     }
                 }
         }
@@ -417,6 +421,7 @@ public class Client extends Application {
                 if (buff.get(0) == CommonData.O_RESPOND) {
                     if (buff.get(1) == CommonData.SERV_YES) {
                         newNoteId = buff.get(2);
+                        System.out.println("New note id = "+newNoteId);
                     }
                 }
         }
@@ -450,18 +455,19 @@ public class Client extends Application {
     }
 
     private ArrayList<String> UpdateTagList(final String tags) {
-        int lastId = 0;
+        int nextId = 0;
         ArrayList<String> res = new ArrayList<>();
         if (_tagList.size() > 0)
-            lastId = _tagList.get(_tagList.size() - 1).GetId();
+            nextId = _tagList.get(_tagList.size() - 1).GetId()+1;
+
         StringBuilder str = new StringBuilder();
         if (tags.length() > 0) {
             for (int i = 0; i < tags.length(); i++) {
                 if (tags.charAt(i) == CommonData.USER_INPUT_TAGS_SEP) {
                     if (str.length() > 0) {
-                        Tag t = new Tag(lastId, str.toString());
+                        Tag t = new Tag(nextId, str.toString());
                         if (!t.TagIsInArray(_tagList)) {
-                            lastId++;
+                            nextId++;
                             _tagList.add(t);
                         }
                         res.add(str.toString());
@@ -472,9 +478,9 @@ public class Client extends Application {
                 }
             }
             if (str.length() > 0) {
-                Tag t = new Tag(lastId, str.toString());
+                Tag t = new Tag(nextId, str.toString());
                 if (!t.TagIsInArray(_tagList)) {
-                    lastId++;
+                    nextId++;
                     _tagList.add(t);
                 }
                 res.add(str.toString());
