@@ -56,13 +56,13 @@ public class LoginController {
         _userData = data;
         _mainStage = stage;
         _client = client;
+        if (!_client.GetLLR())
+            NotifyUser("User name does not exist, or password is incorrect.");
         _mainStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             public void handle(WindowEvent we) {
                 _client.SetStatusExit();
             }
         });
-        if (!_client.GetLLR())
-            NotifyUser("User name does not exist, or password is incorrect.");
     }
 
     private void NotifyUser(final String s) {
