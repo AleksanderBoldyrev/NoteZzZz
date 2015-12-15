@@ -65,4 +65,8 @@ public class User {
     public void AddNote(int noteId)  {
         this._notes_u.add(noteId);
     }
+
+    public boolean Verify(final String log, final String pass) {
+        return ((_login.equals(log))&&(_pass.equals(pass)));
+    }
 }

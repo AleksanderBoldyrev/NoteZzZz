@@ -39,9 +39,8 @@ public class BaseWorker {
     public int CheckUser(String log, String pass) {
         if (this._users.size() > 0) {
             for (User _user : this._users) {
-                if (_user.GetName().equals(log))
-                    if (_user.GetPass().equals(pass))
-                        return _user.GetId();
+                if (_user.Verify(log, pass))
+                    return _user.GetId();
             }
         }
         return -1;
@@ -421,55 +420,16 @@ public class BaseWorker {
      * @param id   - ID of the note;
      * @param data - Title name.
      */
-    public void SetNoteCaption(int id, String data) {
+    public int SetNoteCaption(int id, String data) {
         if (VerifyNoteId(id)) {
-            this._notes.get(id).SetTitle(data);
+            if (this._notes.size() > 0)
+                for (int i = 0; i < this._notes.size(); i++)
+                    if (this._notes.get(i).GetId() == id) {
+                        this._notes.get(i).SetTitle(data);
+                        return CommonData.SERV_YES;
+                    }
         }
-    }
-
-    /**
-     * Hashing the tag-list to the note by note ID;
-     *
-     * @param id - ID of the note;
-     * @param t  - list of tags.
-     */
-    public void SetNoteTags(int id, ArrayList<Integer> t) {
-        if (VerifyNoteId(id)) {
-            this._notes.get(id).SetTags(t);
-        }
-    }
-
-    /**
-     * Removing the note's last version;
-     *
-     * @param id  - ID of the note;
-     * @param ver - version of tha note.
-     */
-    public void RemoveNoteVer(int id, int ver) {
-        if (VerifyNoteId(id))
-            this._notes.get(id).DelVersion(ver);
-    }
-
-    /**
-     * Setting the username of the user by user ID;
-     *
-     * @param id   - ID of the user;
-     * @param data - username.
-     */
-    public void SetUserName(int id, String data) {
-        if (VerifyUserId(id))
-            this._users.get(id).SetLogin(data);
-    }
-
-    /**
-     * Setting the password of the user by user ID;
-     *
-     * @param id   - ID of the user;
-     * @param data - password.
-     */
-    public void SetUserPass(int id, String data) {
-        if (VerifyUserId(id))
-            _users.get(id).SetPass(data);
+        return CommonData.SERV_NO;
     }
 
     /**
@@ -614,20 +574,28 @@ public class BaseWorker {
      *
      * @param userId - user account ID.
      */
-    public void DeleteUser(int userId) {
+    public int DeleteUser(final int userId) {
         if (VerifyUserId(userId)) {
-            //Remove notes
-            if (_users.get(userId).GetNotesCount() > 0) {
-                ArrayList<Integer> un = _users.get(userId).GetNotes();
-                for (int j = 0; j < _notes.size(); j++) {
-                    if (un.contains(_notes.get(j).GetId()))
-                        _notes.remove(j);
-                }
-            }
+            if (this._users.size() > 0)
+                for (int i = 0; i < this._users.size(); i++)
+                    if (this._users.get(i).GetId() == userId) {
+                        //Remove notes
+                        ArrayList<Integer> un = _users.get(userId).GetNotes();
+                        if (un.size() > 0) {
+                            for (int j = 0; j < _notes.size(); j++) {
+                                if (un.contains(_notes.get(j).GetId()))
+                                    _notes.remove(j);
+                            }
+                        }
+                        //remove user
+                        _users.remove(i);
+                        return CommonData.SERV_YES;
+                    }
         }
+        return CommonData.SERV_NO;
     }
 
-    public void DeleteNoteFromUser(final int userId, final int noteId){
+    public void DeleteNoteFromUser(final int userId, final int noteId) {
         if (VerifyUserId(userId)) {
             if (_users.size() > 0) {
                 for (int i = 0; i < _users.size(); i++) {
@@ -665,32 +633,6 @@ public class BaseWorker {
         LoadNotes(CommonData.PATH_NOTES);
         LoadUsers(CommonData.PATH_USERS);
         LoadTags(CommonData.PATH_TAGS);
-    }
-
-    /**
-     * Deleting the tag by it's ID;
-     *
-     * @param id - tag's ID.
-     */
-    public void DeleteTagById(int id) {
-        if (VerifyTagId(id)) {
-            if (_tags.size() > 0)
-                for (int i = 0; i < _tags.size(); i++)
-                    if (_tags.get(i).GetId() == id)
-                        _tags.remove(i);
-        }
-    }
-
-    /**
-     * Deleting the tag by it's title;
-     *
-     * @param name - tag's title.
-     */
-    public void DeleteTagByName(String name) {
-        if (_tags.size() > 0)
-            for (int i = 0; i < _tags.size(); i++)
-                if (_tags.get(i).GetStrData().equals(name))
-                    _tags.remove(i);
     }
 
     /**
@@ -897,7 +839,7 @@ public class BaseWorker {
         return CommonData.SERV_NO;
     }
 
-    public int AddVersionToNote(int noteId, String text, LocalDateTime time) {
+    public int AddVersionToNote(final int noteId, final String text, final LocalDateTime time) {
         int res = CommonData.SERV_NO;
         if (VerifyNoteId(noteId)) {
             if (_notes.size() > 0) {
@@ -922,6 +864,17 @@ public class BaseWorker {
             }
         }
         return CommonData.SERV_NO;
+    }
+
+    public int GetUserId(final String log, final String pass) {
+        if (_users.size() > 0) {
+            for (int i = 0; i < _users.size(); i++) {
+                if (_users.get(i).Verify(log, pass)) {
+                    return _users.get(i).GetId();
+                }
+            }
+        }
+        return -1;
     }
 }
 

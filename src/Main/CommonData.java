@@ -30,7 +30,7 @@ public final class CommonData {
     public static final String LOG_W_CAPTION = "Welcome to NoteZ app";
     public static final String MAIN_W_CAPTION = "NoteZ app";
 
-    public static final int LOG_W_H = 282;
+    public static final int LOG_W_H = 355;
     public static final int LOG_W_W = 250;
     public static final int MAIN_W_H = 400;
     public static final int MAIN_W_W = 775;
@@ -44,22 +44,18 @@ public final class CommonData {
     public static final int O_LOGOUT = 4;
     public static final int O_CREATE_N = 5;
     public static final int O_DELETE_N = 6;
-    public static final int O_CREATE_T = 7;
-    public static final int O_DELETE_T = 8;
     public static final int O_SAVE_N = 9;
     public static final int O_DELETE_N_V = 10;
-    public static final int O_SEARCH_N = 11;
     public static final int O_GETCAPTIONS = 12;
     public static final int O_GETTAGS = 13;
     public static final int O_SETTAGS = 14;
     public static final int O_GETNOTEIDS = 15;
-    public static final int O_GETNOTEPRIM = 16;
     public static final int O_GETVERSDATE = 17;
     public static final int O_SETNOTEIDS = 19;
-    public static final int O_SETNOTEPRIM = 20;
     public static final int O_ADD_TAGS_TO_NOTE = 21;
     public static final int O_SYNC_TAG_LIST = 22;
     public static final int O_ADD_VERSION = 23;
     public static final int O_GET_VERSIONS = 24;
     public static final int O_GET_MORE_INFO = 25;
+    public static final int O_CHANGE_CAPTION = 26;
 }

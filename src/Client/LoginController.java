@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
@@ -15,7 +16,7 @@ import javafx.stage.WindowEvent;
  */
 public class LoginController {
     @FXML
-    private Label infoLabel;
+    private Text infoLabel;
     @FXML
     private TextField serverName;
     @FXML
@@ -60,6 +61,8 @@ public class LoginController {
                 _client.SetStatusExit();
             }
         });
+        if (!_client.GetLLR())
+            NotifyUser("User name does not exist, or password is incorrect.");
     }
 
     private void NotifyUser(final String s) {
@@ -67,12 +70,12 @@ public class LoginController {
     }
 
     public void DeleteUserButtonClicked(Event event) {
-        userName.clear();
-        password.clear();
-        int res = _client.DeleteUser();
+        int res = _client.DeleteUser(userName.getText(), password.getText());
         if (res == CommonData.SERV_YES)
             NotifyUser("User account has been successfully deleted.");
         else
             NotifyUser("User account hasn't been successfully deleted. Please, try again.");
+        userName.clear();
+        password.clear();
     }
 }

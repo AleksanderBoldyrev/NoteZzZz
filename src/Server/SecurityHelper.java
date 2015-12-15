@@ -168,13 +168,14 @@ public class SecurityHelper {
         return !res;
     }
 
-    public synchronized boolean DeleteUser(int userId) {
+    public synchronized int DeleteUser(final String log, final String pass) {
         _rCount++;
-        if (_activeUsers.contains(userId)) {
-            _dataBase.DeleteUser(userId);
-            return true;
+        int userId = _dataBase.GetUserId(log, pass);
+        if (_activeUsers.contains(userId))
+            return CommonData.SERV_NO;
+        else {
+            return _dataBase.DeleteUser(userId);
         }
-        return false;
     }
 
     public synchronized boolean SaveNote(int userId) {
@@ -290,5 +291,13 @@ public class SecurityHelper {
             return _dataBase.GetNoteVerDateById(userId, noteId, verId);
         }
         return res;
+    }
+
+    public int ChangeCaption(int userId, int noteId, String newCaption) {
+        if (_activeUsers.contains(userId))
+            if (HaveUserNote(userId, noteId)) {
+                return _dataBase.SetNoteCaption(noteId, newCaption);
+            }
+        return CommonData.SERV_NO;
     }
 }

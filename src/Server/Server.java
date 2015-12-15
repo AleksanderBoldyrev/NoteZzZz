@@ -60,17 +60,11 @@ public class Server extends Thread {
                             case CommonData.O_CREATE_N:
                                 resp = CreateNote(buff);
                                 break;
-                            case CommonData.O_CREATE_T:
-                                resp = CreateTag(buff);
-                                break;
                             case CommonData.O_DELETE_N:
                                 resp = DeleteNote(buff);
                                 break;
                             case CommonData.O_DELETE_N_V:
                                 resp = DeleteNoteByVer(buff);
-                                break;
-                            case CommonData.O_DELETE_T:
-                                resp = DeleteTag(buff);
                                 break;
                             case CommonData.O_DELETE_U:
                                 resp = DeleteUser(buff);
@@ -84,9 +78,6 @@ public class Server extends Thread {
                             case CommonData.O_SAVE_N:
                                 resp = SaveNote(buff);
                                 break;
-                            case CommonData.O_SEARCH_N:
-                                resp = SearchNote(buff);
-                                break;
                             case CommonData.O_GETCAPTIONS:
                                 resp = GetCaptions(buff);
                                 break;
@@ -99,17 +90,11 @@ public class Server extends Thread {
                             case CommonData.O_GETNOTEIDS:
                                 resp = GetNoteIds(buff);
                                 break;
-                            case CommonData.O_GETNOTEPRIM:
-                                resp = GetNotePrimitive(buff);
-                                break;
                             case CommonData.O_GETVERSDATE:
                                 resp = GetVersionsDate(buff);
                                 break;
                             case CommonData.O_SETNOTEIDS:
                                 //resp = SetNotePrimitive(buff);
-                                break;
-                            case CommonData.O_SETNOTEPRIM:
-                                resp = SetNotePrimitive(buff);
                                 break;
                             case CommonData.O_ADD_TAGS_TO_NOTE:
                                 resp = AddTagsToNote(_parser.ParseListOfInteger(str));
@@ -125,6 +110,9 @@ public class Server extends Thread {
                                 break;
                             case CommonData.O_GET_MORE_INFO:
                                 resp = GetMoreInfo(buff);
+                                break;
+                            case CommonData.O_CHANGE_CAPTION:
+                                resp = ChangeCaption(buff);
                                 break;
                         }
 
@@ -161,9 +149,14 @@ public class Server extends Thread {
         }
     }
 
-    public String GetNotePrimitive(ArrayList<String> buff) {
-        String res = "";
-        return res;
+    private String ChangeCaption(ArrayList<String> buff) {
+        int suc = CommonData.SERV_NO;
+        if (buff.size() > 2) {
+            int noteId = Integer.parseInt(buff.get(1));
+            String newCaption = buff.get(2);
+            suc = ServerDaemon.sHelper.ChangeCaption(_userId, noteId, newCaption);
+        }
+        return _parser.Build(suc, CommonData.O_RESPOND);
     }
 
     public String GetVersionsDate(ArrayList<String> buff) {
@@ -177,11 +170,6 @@ public class Server extends Thread {
 
     public void FlushBases() {
         ServerDaemon.sHelper.FlushBases();
-    }
-
-    public String SetNotePrimitive(ArrayList<String> buff) {
-        String res = new String();
-        return res;
     }
 
     public String GetNoteIds(ArrayList<String> buff) {
@@ -274,18 +262,13 @@ public class Server extends Thread {
     }
 
     public String DeleteUser(ArrayList<String> in) {
-        //ArrayList<Integer> res = _parser.ParseListOfInteger(in);
-        StringBuilder out = new StringBuilder();
-        boolean suc = false;
+        int suc = CommonData.SERV_NO;
         if (in.size() > 2) {
-            suc = ServerDaemon.sHelper.DeleteUser(_userId);
+            String userName = in.get(1);
+            String userPass = in.get(2);
+            suc = ServerDaemon.sHelper.DeleteUser(userName, userPass);
         }
-        if (suc) {
-            out.append(CommonData.SERV_YES);
-            _userId = -1;
-        } else
-            out.append(CommonData.SERV_NO);
-        return _parser.Build(out.toString(), CommonData.O_RESPOND);
+        return _parser.Build(suc, CommonData.O_RESPOND);
     }
 
     public String AddVersion(ArrayList<String> buff) {
@@ -396,20 +379,5 @@ public class Server extends Thread {
         else
             res.append(CommonData.SERV_NO);
         return _parser.Build(res.toString(), CommonData.O_RESPOND);
-    }
-
-    public String SearchNote(ArrayList<String> buff) {
-        String res = new String();
-        return res;
-    }
-
-    public String CreateTag(ArrayList<String> buff) {
-        String res = new String();
-        return res;
-    }
-
-    public String DeleteTag(ArrayList<String> buff) {
-        String res = new String();
-        return res;
     }
 }

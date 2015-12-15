@@ -49,6 +49,7 @@ public class Client extends Application {
 
     private int _selectedNote;
     private int _selectedVersion;
+    private boolean _lastLoginRes;
 
     public void startProcess() {
         try {
@@ -69,6 +70,7 @@ public class Client extends Application {
     public void start(Stage primaryStage) throws Exception {
         startProcess();
 
+        _lastLoginRes = true;
         _isAuth = false;
         _mainStage = new Stage();
 
@@ -80,6 +82,14 @@ public class Client extends Application {
             if (_stage != 2)
                 ShowMainWindow();
         }
+    }
+
+    public boolean GetLLR(){
+        return _lastLoginRes;
+    }
+
+    public void SetLLR(final boolean b){
+        _lastLoginRes = b;
     }
 
     private void ShowLoginWindow() throws Exception {
@@ -290,7 +300,10 @@ public class Client extends Application {
                         _stage = 0;
                         LoadBasicDataFromServer();
                         suc = CommonData.SERV_YES;
+                        _lastLoginRes = true;
                     }
+                    else
+                        _lastLoginRes = false;
                 }
         }
         return suc;
@@ -341,9 +354,12 @@ public class Client extends Application {
         return suc;
     }
 
-    public int DeleteUser() {
+    public int DeleteUser(final String log, final String pass) {
         int res = CommonData.SERV_NO;
-        String st = _parser.Build("", CommonData.O_DELETE_U);
+        ArrayList<String> buf = new ArrayList<String>();
+        buf.add(log);
+        buf.add(pass);
+        String st = _parser.Build(buf, CommonData.O_DELETE_U);
         SendToServer(st);
         String str = WaitForServer();
         if (!str.equals("")) {
@@ -361,10 +377,10 @@ public class Client extends Application {
     public void CreateVersion(final String newText, final String newDate, final String tags, final String newCaption) {
         ArrayList<String> buf = new ArrayList<String>();
         int verId = CommonData.SERV_NO;
-
+        int noteId = this._notes.get(this._selectedNote).getId().get();
         String text = _parser.fixNoteData(newText);
 
-        buf.add(this._notes.get(this._selectedNote).getId().get() + "");
+        buf.add(noteId + "");
         buf.add(text);
         buf.add(newDate);
 
@@ -380,10 +396,68 @@ public class Client extends Application {
                         verId = buff.get(2);
                         VersionInfoModel temp = new VersionInfoModel(newDate, text, verId);
                         this._versions.add(temp);
-                        //System.out.println("New note id = "+verId);
+                        AddTagsToNote(tags, noteId);
+                        ChangeNoteCaption(newCaption, noteId);
                     }
                 }
         }
+    }
+
+    private int AddTagsToNote(final String tagString, final int newNoteId) {
+        String st;
+        ArrayList<String> tagData = UpdateTagList(tagString);
+        ArrayList<String> res = new ArrayList<String>();
+        //Sync tags with server
+        SyncTags();
+        // Add tags to created note
+        res.clear();
+        //Convert tags of new note to tag ids
+        res.add(newNoteId + "");
+        ArrayList<Integer> tags = ConvertTagsIntoIds(tagData);
+        if (tags.size() > 0)
+            for (int i = 0; i < tags.size(); i++) {
+                res.add(tags.get(i).toString());
+            }
+
+        st = this._parser.Build(res, CommonData.O_ADD_TAGS_TO_NOTE);
+        SendToServer(st);
+        st = WaitForServer();
+        if (!st.equals("")) {
+            ArrayList<Integer> buff = this._parser.ParseListOfInteger(st);
+            if (buff.size() > 1)
+                if (buff.get(0) == CommonData.O_RESPOND) {
+                    if (buff.get(1) == CommonData.SERV_YES) {
+                        _notes.get(_selectedNote).setTags(tagString);
+                        return CommonData.SERV_YES;
+                    }
+                }
+        }
+        return CommonData.SERV_NO;
+    }
+
+    private int ChangeNoteCaption(final String caption, final int newNoteId) {
+        String st;
+        ArrayList<String> res = new ArrayList<String>();
+        // Add tags to created note
+        res.clear();
+        //Convert tags of new note to tag ids
+        res.add(newNoteId + "");
+        res.add(caption);
+
+        st = this._parser.Build(res, CommonData.O_CHANGE_CAPTION);
+        SendToServer(st);
+        st = WaitForServer();
+        if (!st.equals("")) {
+            ArrayList<Integer> buff = this._parser.ParseListOfInteger(st);
+            if (buff.size() > 1)
+                if (buff.get(0) == CommonData.O_RESPOND) {
+                    if (buff.get(1) == CommonData.SERV_YES) {
+                        _notes.get(_selectedNote).setTitle(caption);
+                        return CommonData.SERV_YES;
+                    }
+                }
+        }
+        return CommonData.SERV_NO;
     }
 
     public void CreateNote(final String newCaption, final String newText, final String newTags, final String newDate) {
@@ -391,12 +465,6 @@ public class Client extends Application {
         int newNoteId = -1;
         String st;
         String text = _parser.fixNoteData(newText);
-
-        //Parse new tags
-        ArrayList<String> tagData = UpdateTagList(newTags);
-
-        //Sync tags with server
-        SyncTags();
 
         //Fill request
         res.clear();
@@ -419,28 +487,8 @@ public class Client extends Application {
                 }
         }
 
-        // Add tags to created note
-        res.clear();
-        //Convert tags of new note to tag ids
-        res.add(newNoteId + "");
-        ArrayList<Integer> tags = ConvertTagsIntoIds(tagData);
-        if (tags.size() > 0)
-            for (int i = 0; i < tags.size(); i++) {
-                res.add(tags.get(i).toString());
-            }
+        AddTagsToNote(newTags, newNoteId);
 
-        st = this._parser.Build(res, CommonData.O_ADD_TAGS_TO_NOTE);
-        SendToServer(st);
-        st = WaitForServer();
-        if (!st.equals("")) {
-            ArrayList<Integer> buff = this._parser.ParseListOfInteger(st);
-            if (buff.size() > 1)
-                if (buff.get(0) == CommonData.O_RESPOND) {
-                    if (buff.get(1) == CommonData.SERV_YES) {
-
-                    }
-                }
-        }
         NoteModel nm = new NoteModel(newNoteId, newCaption, newTags, newDate, newDate);
         //_noteData.setId(newNoteId);
         _notes.add(nm);
@@ -506,6 +554,8 @@ public class Client extends Application {
             ArrayList<Integer> buff = new ArrayList<Integer>();
             int noteId = _notes.get(this._selectedNote).getId().get();
             int versId = _versions.get(this._selectedVersion).getId().get();
+            buff.add(noteId);
+            buff.add(versId);
             String st = _parser.Build(CommonData.O_DELETE_N_V, buff);
             SendToServer(st);
             String str = WaitForServer();

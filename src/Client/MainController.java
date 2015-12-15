@@ -210,19 +210,21 @@ public class MainController {
     public void DeleteButtonClicked(Event event) {
         NotifyUser("");
         if (!_isNoteDel) {
-            _client.DeleteVersion();
+            //_client.DeleteVersion();
             this.noteData.setText("");
             this._undoBuff = "";
             if (_client.getVersions().size()>1) {
                 _client.DeleteVersion();
-                versView.getSelectionModel().select(_client.getVersions().size() - 1);
+                VersViewSelected(_client.getVersions().get(_client.getVersions().size() - 1));
+                //versView.getSelectionModel().select(_client.getVersions().size() - 1);
             }
             else {
                 _client.DeleteNote();
                 this.noteCaption.setText("");
                 this.tagList.setText("");
                 if (_client.getNotes().size()>0)
-                    noteView.getSelectionModel().select(_client.getNotes().size()-1);
+                    NoteViewSelected(_client.getNotes().get(_client.getNotes().size()-1));
+                    //noteView.getSelectionModel().select(_client.getNotes().size()-1);
             }
         }
         else {
@@ -232,7 +234,8 @@ public class MainController {
             this.noteCaption.setText("");
             this.tagList.setText("");
             if (_client.getNotes().size()>0)
-                noteView.getSelectionModel().select(_client.getNotes().size()-1);
+                NoteViewSelected(_client.getNotes().get(_client.getNotes().size()-1));
+                //noteView.getSelectionModel().select(_client.getNotes().size()-1);
         }
     }
 }

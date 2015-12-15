@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="NoteZzZz:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/NoteZzZz_jar</output-path>
+    <root id="archive" name="NoteZzZz.jar">
+      <element id="module-output" name="NoteZzZz" />
+    </root>
+  </artifact>
+</component>
