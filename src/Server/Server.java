@@ -333,7 +333,7 @@ public class Server extends Thread {
         return _parser.Build(CommonData.O_RESPOND, res);
     }
 
-    public String CreateNote(ArrayList<String> buff) {   //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    public String CreateNote(ArrayList<String> buff) {
         ArrayList<Integer> res = new ArrayList<Integer>();
         int suc = CommonData.SERV_NO;
         ArrayList<Integer> ar = new ArrayList<Integer>();

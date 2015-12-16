@@ -88,10 +88,6 @@ public class Client extends Application {
         return _lastLoginRes;
     }
 
-    public void SetLLR(final boolean b){
-        _lastLoginRes = b;
-    }
-
     private void ShowLoginWindow() throws Exception {
         /* Show login window */
         int suc = CommonData.SERV_NO;
@@ -113,7 +109,6 @@ public class Client extends Application {
                 suc = CreateUser(_userData.getLogin().get(), _userData.getPass().get());
             else
                 suc = Login(_userData.getLogin().get(), _userData.getPass().get());
-        /*TODO: to add support of situation when user closed login window without login or create user*/
         }
     }
 
