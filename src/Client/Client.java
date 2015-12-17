@@ -250,35 +250,27 @@ public class Client extends Application {
         return this._versions;
     }
 
-    public int getSelectedNote() {
-        return _selectedNote;
-    }
+    //public int getSelectedNote() {return _selectedNote;}
 
     public void setSelectedNote(final int sn) {
         _selectedNote = sn;
     }
 
-    public int getSelectedVersion() {
-        return _selectedVersion;
-    }
+    //public int getSelectedVersion() {return _selectedVersion;}
 
     public void setSelectedVersion(final int sv) {
         _selectedVersion = sv;
     }
 
-    public Stage getPrimaryStage() {
-        return _mainStage;
-    }
+    //public Stage getPrimaryStage() { return _mainStage; }
 
-    public void setAuth(final boolean flag) {
-        _isAuth = flag;
-    }
+    //public void setAuth(final boolean flag) {_isAuth = flag;}
 
-    public int Login(String _log, String _pass) {
+    public int Login(String _log, String _passw) {
         int suc = CommonData.SERV_NO;
         ArrayList<String> s = new ArrayList<String>();
         s.add(_log);
-        s.add(_pass);
+        s.add(_passw);
 
         String st = _parser.Build(s, CommonData.O_LOGIN);
         SendToServer(st);
@@ -290,7 +282,7 @@ public class Client extends Application {
                 if (buff.get(0) == CommonData.O_RESPOND) {
                     if (buff.get(1) == CommonData.SERV_YES) {
                         _login = _log;
-                        _pass = _pass;
+                        _pass = _passw;
                         _isAuth = true;
                         _stage = 0;
                         LoadBasicDataFromServer();
@@ -372,7 +364,9 @@ public class Client extends Application {
     public void CreateVersion(final String newText, final String newDate, final String tags, final String newCaption) {
         ArrayList<String> buf = new ArrayList<String>();
         int verId = CommonData.SERV_NO;
-        int noteId = this._notes.get(this._selectedNote).getId().get();
+        int noteId;
+        if (this._notes.size() == 0) noteId = 0;
+        else noteId = this._notes.get(this._selectedNote).getId().get();
         String text = _parser.fixNoteData(newText);
 
         buf.add(noteId + "");
@@ -422,7 +416,7 @@ public class Client extends Application {
             if (buff.size() > 1)
                 if (buff.get(0) == CommonData.O_RESPOND) {
                     if (buff.get(1) == CommonData.SERV_YES) {
-                        _notes.get(_selectedNote).setTags(tagString);
+                        if (_notes.size() > 0) _notes.get(_selectedNote).setTags(tagString);
                         return CommonData.SERV_YES;
                     }
                 }
@@ -477,7 +471,6 @@ public class Client extends Application {
                 if (buff.get(0) == CommonData.O_RESPOND) {
                     if (buff.get(1) == CommonData.SERV_YES) {
                         newNoteId = buff.get(2);
-                        //System.out.println("New note id = "+newNoteId);
                     }
                 }
         }
@@ -485,7 +478,6 @@ public class Client extends Application {
         AddTagsToNote(newTags, newNoteId);
 
         NoteModel nm = new NoteModel(newNoteId, newCaption, newTags, newDate, newDate);
-        //_noteData.setId(newNoteId);
         _notes.add(nm);
         VersionInfoModel vim = new VersionInfoModel(newDate, text, 0);
         _versions.add(vim);

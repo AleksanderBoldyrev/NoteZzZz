@@ -74,17 +74,7 @@ public class MainController {
         // Clear person details.
         NoteViewSelected(null);
         VersViewSelected(null);
-
-        //noteColumn.setResizable(false);
-        //versColumn.setResizable(false);
-
     }
-
-    /*@FXML
-    private void CloseNoteButtonClicked(Event event) {
-        ShowInfo2(null);
-        _mode = 0;
-    }*/
 
     @FXML
     private void SaveButtonClicked(Event event) {
