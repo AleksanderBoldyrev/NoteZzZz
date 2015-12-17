@@ -475,6 +475,11 @@ public class BaseWorker {
         }
     }
 
+    /**
+     * Synchronization of the tag base;
+     * @param newTags - not updated tags.
+     */
+
     public void SyncTags(final ArrayList<Tag> newTags) {
         boolean found = false;
         int max = 0;
@@ -515,6 +520,13 @@ public class BaseWorker {
         }
     }
 
+    /**
+     * Adding the tag list to the note;
+     * @param noteId - ID of the note;
+     * @param tags - new tag list;
+     * @return - success of the operation.
+     */
+
     public int AddTagsToNote(final int noteId, final ArrayList<Integer> tags) {
         if (VerifyNoteId(noteId))
             if (this._notes.size() > 0)
@@ -525,6 +537,13 @@ public class BaseWorker {
                     }
         return CommonData.SERV_NO;
     }
+
+    /**
+     * Adding the note to the user;
+     * @param userId - ID of the user;
+     * @param noteId - ID of the note;
+     * @return - success of hte operation.
+     */
 
     public int AddNoteToUser(final int userId, final int noteId) {
         if (VerifyUserId(userId) && VerifyNoteId(noteId)) {
@@ -539,6 +558,15 @@ public class BaseWorker {
         }
         return CommonData.SERV_NO;
     }
+
+    /**
+     * Adding the note to the DB;
+     * @param data - consistence of the note;
+     * @param title - note's caption;
+     * @param cDate - creation date;
+     * @param mDate - last change date;
+     * @return - ID of the note.
+     */
 
     public int AddNote(final String data, final String title, final String cDate, final String mDate) {
         //if (VerifyUserId(userId)) ;
@@ -839,6 +867,14 @@ public class BaseWorker {
         return CommonData.SERV_NO;
     }
 
+    /**
+     * Adding the version to the note;
+     * @param noteId - ID of the note;
+     * @param text - text of the current version;
+     * @param time - last change date;
+     * @return - ID of a new version.
+     */
+
     public int AddVersionToNote(final int noteId, final String text, final LocalDateTime time) {
         int res = CommonData.SERV_NO;
         if (VerifyNoteId(noteId)) {
@@ -853,6 +889,13 @@ public class BaseWorker {
         return res;
     }
 
+    /**
+     * Deleting chosen version;
+     * @param noteId - ID of the note;
+     * @param versId - ID of the version;
+     * @return - ID of the deleted version.
+     */
+
     public int DeleteVersion(int noteId, int versId) {
         if (VerifyNoteId(noteId)) {
             if (_notes.size() > 0) {
@@ -865,6 +908,13 @@ public class BaseWorker {
         }
         return CommonData.SERV_NO;
     }
+
+    /**
+     * Getting the ID of the user;
+     * @param log - user's login;
+     * @param pass - user's password;
+     * @return - ID of the user.
+     */
 
     public int GetUserId(final String log, final String pass) {
         if (_users.size() > 0) {

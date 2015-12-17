@@ -36,20 +36,38 @@ public class LoginController {
 
     @FXML
     private void LoginButtonClicked(Event event) {
-        _userData.setServer(serverName.getText());
-        _userData.setLogin(userName.getText());
-        _userData.setPass(password.getText());
-        _userData.setToCreate(false);
-        _mainStage.close();
+        if (!serverName.getText().equals("") && !userName.getText().equals("")) {
+            _userData.setServer(serverName.getText());
+            _userData.setLogin(userName.getText());
+            _userData.setPass(password.getText());
+            _userData.setToCreate(false);
+            _mainStage.close();
+        }
+        else NotifyUser("The login or password fields are empty. Type smth in.");
     }
 
     @FXML
     private void CreateUserButtonClicked(Event event) {
-        _userData.setServer(serverName.getText());
-        _userData.setLogin(userName.getText());
-        _userData.setPass(password.getText());
-        _userData.setToCreate(true);
-        _mainStage.close();
+        if (!serverName.getText().equals("") && !userName.getText().equals("")) {
+            _userData.setServer(serverName.getText());
+            _userData.setLogin(userName.getText());
+            _userData.setPass(password.getText());
+            _userData.setToCreate(true);
+            _mainStage.close();
+        }
+    }
+
+    @FXML
+    public void DeleteUserButtonClicked(Event event) {
+        if (!serverName.getText().equals("") && !userName.getText().equals("")) {
+            int res = _client.DeleteUser(userName.getText(), password.getText());
+            if (res == CommonData.SERV_YES)
+                NotifyUser("User account has been successfully deleted.");
+            else
+                NotifyUser("User account hasn't been successfully deleted. Please, try again.");
+            userName.clear();
+            password.clear();
+        }
     }
 
     public void SetUserData(Client client, UserModel data, Stage stage) {
@@ -67,15 +85,5 @@ public class LoginController {
 
     private void NotifyUser(final String s) {
         infoLabel.setText(s);
-    }
-
-    public void DeleteUserButtonClicked(Event event) {
-        int res = _client.DeleteUser(userName.getText(), password.getText());
-        if (res == CommonData.SERV_YES)
-            NotifyUser("User account has been successfully deleted.");
-        else
-            NotifyUser("User account hasn't been successfully deleted. Please, try again.");
-        userName.clear();
-        password.clear();
     }
 }

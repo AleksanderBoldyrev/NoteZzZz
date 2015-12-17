@@ -24,7 +24,7 @@ public final class CommonData {
     public static final int SERV_YES = 1;                               // Positive server respond.
     public static final int SERV_NO = 0;                                // Negative server respond.
     public static final char NEW_LINE_SYMB = '\n';                      // Symbol of the new line in escape-sequence notation.
-    public static final char NEW_LINE_REPLACEMENT = '~';                // Symbol used to replace the new line symbol.
+    public static final char NEW_LINE_REPLACEMENT = '~';                // Symbol used to replace the6 new line symbol.
     public static final String SEPARATOR_REPLACEMENT = "\\/";           // Symbol used to replace the
 
     public static final String LOG_W_CAPTION = "Welcome to NoteZ app";  // Login window caption text.
