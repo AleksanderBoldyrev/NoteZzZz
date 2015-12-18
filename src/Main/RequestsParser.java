@@ -9,7 +9,6 @@ import java.util.ArrayList;
  * Class used to parse the data we send from client to server and backward.
  */
 
-
 public class RequestsParser {
 
     public String BuildTagList(ArrayList<Tag> tags) {
@@ -84,7 +83,7 @@ public class RequestsParser {
         return res.toString();
     }
 
-    private String fixString(final String str, final boolean dir){
+    public String fixString(final String str, final boolean dir){
         StringBuilder out = new StringBuilder();
         if (dir) {
             if (str.length() > 0) {
