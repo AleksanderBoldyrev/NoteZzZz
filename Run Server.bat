@@ -1,3 +1,3 @@
 @echo off
-java -jar Server.jar
+java -jar .\Server.jar
 @pause

@@ -43,7 +43,7 @@ public class ServerDaemon extends Thread{
                     _ssocket = new ServerSocket(CommonData.PORT);
                     s = _ssocket.accept();
                 }
-
+                System.out.println("User connected: "+s.toString());
                 Server serv = new Server(s);
                 _serverThreads.add(serv);
                 Thread t = new Thread(serv);
@@ -54,7 +54,6 @@ public class ServerDaemon extends Thread{
                 break;
             }
         }
-
         try {
             s.close();
             _ssocket.close();

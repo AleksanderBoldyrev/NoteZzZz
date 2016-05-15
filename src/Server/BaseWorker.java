@@ -389,7 +389,10 @@ public class BaseWorker {
      * @return - true in case of verification.
      */
     private boolean VerifyUserId(int id) {
-        return id < this._users.size() && id >= 0;
+        if (id>=0)
+            return true;
+        //return id < this._users.get(_users.size()-1).GetId() && id >= 0;
+        return false;
     }
 
     /**
@@ -400,7 +403,10 @@ public class BaseWorker {
      * @return - true in case of verification.
      */
     private boolean VerifyTagId(int id) {
-        return id < this._tags.size() && id >= 0;
+        if (id>=0)
+            return true;
+      //  return id < this._tags.get(_tags.size()-1).GetId() && id >= 0;
+        return false;
     }
 
     /**
@@ -411,7 +417,10 @@ public class BaseWorker {
      * @return - true in case of verification.
      */
     private boolean VerifyNoteId(int id) {
-        return id < this._notes.size() && id >= 0;
+        if (id>=0)
+            return true;
+        //return (id <= this._notes.get(_notes.size()-1).GetId() && id >= 0);
+        return false;
     }
 
     /**

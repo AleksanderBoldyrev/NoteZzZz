@@ -192,7 +192,7 @@ public class Client extends Application {
                     if (buff.size() % 2 == 0)
                         this._tagList = this._parser.ParseListOfTags(buff);
                     else {
-                        //TODO: do anything to preserve unsynchronysation of data between server and client
+                        //TODO: do anything to prevent unsynchronysation of data between server and client
                     }
                 }
         }
@@ -218,7 +218,7 @@ public class Client extends Application {
         String str = WaitForServer();
         if (!str.equals("")) {
             buf = _parser.ParseListOfString(str);
-            if (buf.size() > 5)
+            if (buf.size() > 4)
                 if (Integer.parseInt(buf.get(0)) == CommonData.O_RESPOND) {
                     if (Integer.parseInt(buf.get(1)) == CommonData.SERV_YES) {
                         buf.remove(0);
@@ -320,11 +320,11 @@ public class Client extends Application {
         GetTags();
     }
 
-    public int CreateUser(String _log, String _pass) {
+    public int CreateUser(String _log, String _passw) {
         int suc = CommonData.SERV_NO;
         ArrayList<String> s = new ArrayList<String>();
         s.add(_log);
-        boolean add = s.add(_pass);
+        boolean add = s.add(_passw);
         String st = _parser.Build(s, CommonData.O_CREATE_U);
         SendToServer(st);
         String str = WaitForServer();
@@ -334,7 +334,7 @@ public class Client extends Application {
                 if (buff.get(0) == CommonData.O_RESPOND) {
                     if (buff.get(1) == CommonData.SERV_YES) {
                         _isAuth = true;
-                        suc = Login(_log, _pass);
+                        suc = Login(_log, _passw);
                     }
                 }
         }

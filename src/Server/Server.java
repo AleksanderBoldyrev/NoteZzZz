@@ -40,100 +40,103 @@ public class Server extends Thread {
             String str = "";
             String resp = "";
             while (true) {
+                //System.out.println("Server received: " + str);
                 str = _in.readLine();
-                System.out.println("Server received: " + str);
-                if (str.equals(CommonData.TERMCOMMAND)) {
-                    ServerDaemon.sHelper.FlushBases();
-                    break;
-                }
-                resp = "";
-                //Parsing
-                if (str.length() > 0) {
-                    ArrayList<String> buff = _parser.ParseListOfString(str);
+                if (str != null) {
+                    System.out.println("Server received: " + str);
+                    if (str.equals(CommonData.TERMCOMMAND)) {
+                        ServerDaemon.sHelper.FlushBases();
+                        break;
+                    }
+                    resp = "";
+                    //Parsing
+                    if (str.length() > 0) {
+                        ArrayList<String> buff = _parser.ParseListOfString(str);
 
-                    try {
-                        int command = Integer.parseInt(buff.get(0));
-                        switch (command) {
-                            case CommonData.O_CREATE_U:
-                                resp = CreateUser(buff);
-                                break;
-                            case CommonData.O_CREATE_N:
-                                resp = CreateNote(buff);
-                                break;
-                            case CommonData.O_DELETE_N:
-                                resp = DeleteNote(buff);
-                                break;
-                            case CommonData.O_DELETE_N_V:
-                                resp = DeleteNoteByVer(buff);
-                                break;
-                            case CommonData.O_DELETE_U:
-                                resp = DeleteUser(buff);
-                                break;
-                            case CommonData.O_LOGIN:
-                                resp = Login(buff);
-                                break;
-                            case CommonData.O_LOGOUT:
-                                resp = Logout(buff);
-                                break;
-                            case CommonData.O_SAVE_N:
-                                resp = SaveNote(buff);
-                                break;
-                            case CommonData.O_GETCAPTIONS:
-                                resp = GetCaptions(buff);
-                                break;
-                            case CommonData.O_GETTAGS:
-                                resp = GetTags(buff);
-                                break;
-                            case CommonData.O_SETTAGS:
-                                resp = SetTags(buff);
-                                break;
-                            case CommonData.O_GETNOTEIDS:
-                                resp = GetNoteIds(buff);
-                                break;
-                            case CommonData.O_GETVERSDATE:
-                                resp = GetVersionsDate(buff);
-                                break;
-                            case CommonData.O_SETNOTEIDS:
-                                //resp = SetNotePrimitive(buff);
-                                break;
-                            case CommonData.O_ADD_TAGS_TO_NOTE:
-                                resp = AddTagsToNote(_parser.ParseListOfInteger(str));
-                                break;
-                            case CommonData.O_SYNC_TAG_LIST:
-                                resp = SyncTagList(buff);
-                                break;
-                            case CommonData.O_ADD_VERSION:
-                                resp = AddVersion(buff);
-                                break;
-                            case CommonData.O_GET_VERSIONS:
-                                resp = GetVersions(buff);
-                                break;
-                            case CommonData.O_GET_MORE_INFO:
-                                resp = GetMoreInfo(buff);
-                                break;
-                            case CommonData.O_CHANGE_CAPTION:
-                                resp = ChangeCaption(buff);
-                                break;
+                        try {
+                            int command = Integer.parseInt(buff.get(0));
+                            switch (command) {
+                                case CommonData.O_CREATE_U:
+                                    resp = CreateUser(buff);
+                                    break;
+                                case CommonData.O_CREATE_N:
+                                    resp = CreateNote(buff);
+                                    break;
+                                case CommonData.O_DELETE_N:
+                                    resp = DeleteNote(buff);
+                                    break;
+                                case CommonData.O_DELETE_N_V:
+                                    resp = DeleteNoteByVer(buff);
+                                    break;
+                                case CommonData.O_DELETE_U:
+                                    resp = DeleteUser(buff);
+                                    break;
+                                case CommonData.O_LOGIN:
+                                    resp = Login(buff);
+                                    break;
+                                case CommonData.O_LOGOUT:
+                                    resp = Logout(buff);
+                                    break;
+                                case CommonData.O_SAVE_N:
+                                    resp = SaveNote(buff);
+                                    break;
+                                case CommonData.O_GETCAPTIONS:
+                                    resp = GetCaptions(buff);
+                                    break;
+                                case CommonData.O_GETTAGS:
+                                    resp = GetTags(buff);
+                                    break;
+                                case CommonData.O_SETTAGS:
+                                    resp = SetTags(buff);
+                                    break;
+                                case CommonData.O_GETNOTEIDS:
+                                    resp = GetNoteIds(buff);
+                                    break;
+                                case CommonData.O_GETVERSDATE:
+                                    resp = GetVersionsDate(buff);
+                                    break;
+                                case CommonData.O_SETNOTEIDS:
+                                    //resp = SetNotePrimitive(buff);
+                                    break;
+                                case CommonData.O_ADD_TAGS_TO_NOTE:
+                                    resp = AddTagsToNote(_parser.ParseListOfInteger(str));
+                                    break;
+                                case CommonData.O_SYNC_TAG_LIST:
+                                    resp = SyncTagList(buff);
+                                    break;
+                                case CommonData.O_ADD_VERSION:
+                                    resp = AddVersion(buff);
+                                    break;
+                                case CommonData.O_GET_VERSIONS:
+                                    resp = GetVersions(buff);
+                                    break;
+                                case CommonData.O_GET_MORE_INFO:
+                                    resp = GetMoreInfo(buff);
+                                    break;
+                                case CommonData.O_CHANGE_CAPTION:
+                                    resp = ChangeCaption(buff);
+                                    break;
+                            }
+
+                        } catch (NumberFormatException e) {
+                            System.out.println(e.toString());
                         }
 
-                    } catch (NumberFormatException e) {
-                        System.out.println(e.toString());
+
                     }
 
+                    if (!resp.equals("")) {
+                        _out.println(resp);
+                        System.out.println("Server send: " + resp);
+                    }
 
-                }
+                    FlushBases();
 
-                if (!resp.equals("")) {
-                    _out.println(resp);
-                    System.out.println("Server send: " + resp);
-                }
-
-                FlushBases();
-
-                try {
-                    this.sleep(CommonData.SLEEP_TIME);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    try {
+                        this.sleep(CommonData.SLEEP_TIME);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
 
@@ -156,6 +159,7 @@ public class Server extends Thread {
             String newCaption = buff.get(2);
             suc = ServerDaemon.sHelper.ChangeCaption(_userId, noteId, newCaption);
         }
+        FlushBases();
         return _parser.Build(suc, CommonData.O_RESPOND);
     }
 
@@ -214,6 +218,7 @@ public class Server extends Thread {
         b = ServerDaemon.sHelper.SetTagList(_userId, res);
         StringBuilder stb = new StringBuilder();
         stb.append(CommonData.SERV_YES + "");
+        FlushBases();
         return _parser.Build(stb.toString(), CommonData.O_RESPOND);
     }
 
@@ -258,6 +263,7 @@ public class Server extends Thread {
             res.add(CommonData.SERV_YES + "");
         else
             res.add(CommonData.SERV_NO + "");
+        FlushBases();
         return _parser.Build(res, CommonData.O_RESPOND);
     }
 
@@ -268,6 +274,7 @@ public class Server extends Thread {
             String userPass = in.get(2);
             suc = ServerDaemon.sHelper.DeleteUser(userName, userPass);
         }
+        FlushBases();
         return _parser.Build(suc, CommonData.O_RESPOND);
     }
 
@@ -282,6 +289,7 @@ public class Server extends Thread {
             res.add(CommonData.SERV_YES+"");
         }
         res.add(suc + "");
+        FlushBases();
         return _parser.Build(res, CommonData.O_RESPOND);
     }
 
@@ -317,6 +325,7 @@ public class Server extends Thread {
             ArrayList<Tag> newTags = ServerDaemon.sHelper.SyncTagList(_userId, tags);
             res = _parser.BuildTagList(newTags);
         }
+        FlushBases();
         return _parser.Build(res, CommonData.O_RESPOND);
     }
 
@@ -330,6 +339,7 @@ public class Server extends Thread {
             suc = ServerDaemon.sHelper.AddTagsToNote(_userId, tagId, buff);
         }
         res.add(suc);
+        FlushBases();
         return _parser.Build(CommonData.O_RESPOND, res);
     }
 
@@ -345,6 +355,7 @@ public class Server extends Thread {
         else
             res.add(CommonData.SERV_NO);
         res.add(suc);
+        FlushBases();
         return _parser.Build(CommonData.O_RESPOND, res);
     }
 
@@ -354,6 +365,7 @@ public class Server extends Thread {
             int noteId = Integer.parseInt(buff.get(1));
             suc = ServerDaemon.sHelper.DeleteNote(_userId, noteId);
         }
+        FlushBases();
         return _parser.Build(suc, CommonData.O_RESPOND);
     }
 
@@ -365,6 +377,7 @@ public class Server extends Thread {
             int versId = Integer.parseInt(buff.get(2));
             suc = ServerDaemon.sHelper.DeleteVersion(_userId, noteId, versId);
         }
+        FlushBases();
         return _parser.Build(suc, CommonData.O_RESPOND);
     }
 
@@ -378,6 +391,7 @@ public class Server extends Thread {
             res.append(CommonData.SERV_YES);
         else
             res.append(CommonData.SERV_NO);
+        FlushBases();
         return _parser.Build(res.toString(), CommonData.O_RESPOND);
     }
 }

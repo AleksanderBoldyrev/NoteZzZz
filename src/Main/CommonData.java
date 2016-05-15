@@ -13,6 +13,7 @@ public final class CommonData {
     public static final String PATH_NOTES = "./Base/Notes";             // These are the paths to the DB.
     public static final String PATH_TAGS = "./Base/Tags";               // *
     public static int PORT = 36550;                                     // Number of port we use.
+   // public static final String HOST = "192.168.1.106";                      // Host name.
     public static final String HOST = "localhost";                      // Host name.
     public static final char SEP = '|';                                 // Service separator of the sent data.
     public static final char SEPID = '.';                               // Service separator of tag sequence.
