@@ -12,7 +12,8 @@ import java.util.ArrayList;
  * Class used to create new server threads.
  */
 
-public class ServerDaemon extends Thread{
+//public class ServerDaemon extends Thread{
+public class ServerDaemon {
     private ArrayList<Server> _serverThreads;
     private int _port;
     private ServerSocket _ssocket;
@@ -46,9 +47,11 @@ public class ServerDaemon extends Thread{
                 System.out.println("User connected: "+s.toString());
                 Server serv = new Server(s);
                 _serverThreads.add(serv);
-                Thread t = new Thread(serv);
-                t.setDaemon(true);
-                t.start();
+                //Thread t = new Thread(serv);
+                //t.setDaemon(true);
+                //.start();
+                serv.setDaemon(true);
+                serv.start();
             } catch (IOException e) {
                 System.out.println("Couldn't create a new server thread.");
                 break;

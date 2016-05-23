@@ -113,7 +113,11 @@ public class Note {
 
     public void SetTags(ArrayList<Integer> _tagIds)
     {
-        this._tags = _tagIds;
+        //this._tags = _tagIds;
+        _tags.clear();
+        if (_tagIds.size()>0)
+            for (int i = 0; i< _tagIds.size(); i++)
+                _tags.add(_tagIds.get(i));
     }
 
     public void AddTags(final ArrayList<Integer> tagList){

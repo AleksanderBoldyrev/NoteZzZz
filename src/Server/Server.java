@@ -16,6 +16,7 @@ import java.util.ArrayList;
  */
 
 public class Server extends Thread {
+// public class Server {
     private Socket _socket;
     private BufferedReader _in;
     private PrintWriter _out;
@@ -101,6 +102,9 @@ public class Server extends Thread {
                                 case CommonData.O_ADD_TAGS_TO_NOTE:
                                     resp = AddTagsToNote(_parser.ParseListOfInteger(str));
                                     break;
+                                case CommonData.O_SET_TAGS_TO_NOTE:
+                                    resp = SetTagsToNote(_parser.ParseListOfInteger(str));
+                                    break;
                                 case CommonData.O_SYNC_TAG_LIST:
                                     resp = SyncTagList(buff);
                                     break;
@@ -132,11 +136,11 @@ public class Server extends Thread {
 
                     FlushBases();
 
-                    try {
-                        this.sleep(CommonData.SLEEP_TIME);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    //try {
+                    //    this.sleep(CommonData.SLEEP_TIME);
+                    //} catch (InterruptedException e) {
+                    //    e.printStackTrace();
+                    //}
                 }
             }
 
@@ -337,6 +341,20 @@ public class Server extends Thread {
             int tagId = buff.get(0);
             buff.remove(0); //remove tag id
             suc = ServerDaemon.sHelper.AddTagsToNote(_userId, tagId, buff);
+        }
+        res.add(suc);
+        FlushBases();
+        return _parser.Build(CommonData.O_RESPOND, res);
+    }
+
+    public String SetTagsToNote(ArrayList<Integer> buff) {
+        ArrayList<Integer> res = new ArrayList<Integer>();
+        int suc = -1;
+        if (buff.size() >= 2) {
+            buff.remove(0); // remove operation id
+            int tagId = buff.get(0);
+            buff.remove(0); //remove tag id
+            suc = ServerDaemon.sHelper.SetTagsToNote(_userId, tagId, buff);
         }
         res.add(suc);
         FlushBases();

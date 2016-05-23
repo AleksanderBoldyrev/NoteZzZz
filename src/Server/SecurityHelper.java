@@ -195,6 +195,14 @@ public class SecurityHelper {
         return -1;
     }
 
+    public synchronized int SetTagsToNote(final int userId, final int noteId, final ArrayList<Integer> tags){
+        _rCount++;
+        if (_activeUsers.contains(userId)) {
+            return _dataBase.SetTagsToNote(noteId, tags);
+        }
+        return -1;
+    }
+
     public synchronized void AddTagToNote(String t)
     {
         _rCount++;

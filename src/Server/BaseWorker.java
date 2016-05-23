@@ -328,7 +328,7 @@ public class BaseWorker {
                 int vcount = _note.GetVersionsCount();
                 out.print(vcount);
                 out.print(CommonData.SEP);
-                int t = _note.GetVersionsCount();
+                int t = _note.GetTagsCount();
                 for (int j = 0; j < t; j++) {
                     out.print(_note.GetTagById(j));
                     out.print(CommonData.SEPID);
@@ -542,6 +542,17 @@ public class BaseWorker {
                 for (int i = 0; i < this._notes.size(); i++)
                     if (this._notes.get(i).GetId() == noteId) {
                         this._notes.get(i).AddTags(tags);
+                        return CommonData.SERV_YES;
+                    }
+        return CommonData.SERV_NO;
+    }
+
+    public int SetTagsToNote(final int noteId, final ArrayList<Integer> tags) {
+        if (VerifyNoteId(noteId))
+            if (this._notes.size() > 0)
+                for (int i = 0; i < this._notes.size(); i++)
+                    if (this._notes.get(i).GetId() == noteId) {
+                        this._notes.get(i).SetTags(tags);
                         return CommonData.SERV_YES;
                     }
         return CommonData.SERV_NO;
